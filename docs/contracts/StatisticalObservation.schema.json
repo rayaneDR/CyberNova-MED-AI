@@ -1,0 +1,97 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "astronaut_id": {
+      "format": "uuid",
+      "title": "Astronaut Id",
+      "type": "string"
+    },
+    "mission_id": {
+      "format": "uuid",
+      "title": "Mission Id",
+      "type": "string"
+    },
+    "measurement_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Measurement Ids",
+      "type": "array"
+    },
+    "detected_at": {
+      "format": "date-time",
+      "title": "Detected At",
+      "type": "string"
+    },
+    "activity_context": {
+      "title": "Activity Context",
+      "type": "string"
+    },
+    "metric": {
+      "enum": [
+        "heart_rate_bpm",
+        "spo2_percent",
+        "respiratory_rate_per_min"
+      ],
+      "title": "Metric",
+      "type": "string"
+    },
+    "method": {
+      "enum": [
+        "median_mad",
+        "ewma"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "algorithm_version": {
+      "minLength": 1,
+      "title": "Algorithm Version",
+      "type": "string"
+    },
+    "baseline_id": {
+      "format": "uuid",
+      "title": "Baseline Id",
+      "type": "string"
+    },
+    "score": {
+      "title": "Score",
+      "type": "number"
+    },
+    "explanation": {
+      "minLength": 1,
+      "title": "Explanation",
+      "type": "string"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "astronaut_id",
+    "mission_id",
+    "measurement_ids",
+    "detected_at",
+    "activity_context",
+    "metric",
+    "method",
+    "algorithm_version",
+    "baseline_id",
+    "score",
+    "explanation",
+    "synthetic"
+  ],
+  "title": "StatisticalObservation",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

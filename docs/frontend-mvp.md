@@ -1,5 +1,7 @@
 # Frontend MVP handoff
 
+Update from Ayoub's later scientific clarification: new daily check-ins now use proposed Samn–Perelli 1–7 with an explicit scale marker. Legacy /10 histories and original telemetry fixture indices are preserved and labeled, not converted. The initial implementation/verification notes below describe the earlier frontend revision. See integration-contract-v1.md for the current integration and radiation quantity decisions.
+
 Base inspected: clean `main` at `24c1046`. Implementation branch: `feature/frontend`. Main is not merged or rewritten. The original application already provided a typed mock boundary, v0.1 telemetry shape, six indicator values, a simple chart, CI, and collaboration documentation. These are extended into six mission-control screens, with the original standalone fixture/adapter entry point retained.
 
 ## Behavior and ownership

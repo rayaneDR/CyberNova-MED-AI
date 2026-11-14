@@ -1,0 +1,116 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "measurement_id": {
+      "format": "uuid",
+      "title": "Measurement Id",
+      "type": "string"
+    },
+    "channel": {
+      "enum": [
+        "heart_rate_bpm",
+        "spo2_percent",
+        "respiratory_rate_per_min"
+      ],
+      "title": "Channel",
+      "type": "string"
+    },
+    "source_reported_status": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Source Reported Status"
+    },
+    "hardware_model_claim": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Hardware Model Claim"
+    },
+    "quality": {
+      "enum": [
+        "unverified",
+        "missing",
+        "invalid",
+        "conflict"
+      ],
+      "title": "Quality",
+      "type": "string"
+    },
+    "issue_codes": {
+      "items": {
+        "enum": [
+          "VALUE_MISSING",
+          "INVALID_VALUE",
+          "ALIAS_CONFLICT",
+          "STATUS_UNREPORTED",
+          "SOURCE_STATUS_NOT_VALID"
+        ],
+        "type": "string"
+      },
+      "title": "Issue Codes",
+      "type": "array"
+    },
+    "connectivity": {
+      "enum": [
+        "unknown",
+        "source_reported_disconnected"
+      ],
+      "title": "Connectivity",
+      "type": "string"
+    },
+    "last_source_sample_at": {
+      "format": "date-time",
+      "title": "Last Source Sample At",
+      "type": "string"
+    },
+    "last_non_null_sample_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Last Non Null Sample At"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "measurement_id",
+    "channel",
+    "source_reported_status",
+    "hardware_model_claim",
+    "quality",
+    "issue_codes",
+    "connectivity",
+    "last_source_sample_at",
+    "last_non_null_sample_at",
+    "synthetic"
+  ],
+  "title": "SensorHealth",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

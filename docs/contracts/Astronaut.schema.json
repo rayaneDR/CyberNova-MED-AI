@@ -1,0 +1,75 @@
+{
+  "$defs": {
+    "Alias": {
+      "additionalProperties": false,
+      "properties": {
+        "namespace": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Namespace",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "value"
+      ],
+      "title": "Alias",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "mission_id": {
+      "format": "uuid",
+      "title": "Mission Id",
+      "type": "string"
+    },
+    "display_name": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Display Name",
+      "type": "string"
+    },
+    "role": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Role",
+      "type": "string"
+    },
+    "aliases": {
+      "items": {
+        "$ref": "#/$defs/Alias"
+      },
+      "title": "Aliases",
+      "type": "array"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "mission_id",
+    "display_name",
+    "role",
+    "aliases",
+    "synthetic"
+  ],
+  "title": "Astronaut",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

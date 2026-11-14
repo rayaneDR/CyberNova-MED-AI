@@ -1,0 +1,306 @@
+{
+  "$defs": {
+    "Fatigue": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "maximum": 7,
+          "minimum": 1,
+          "title": "Value",
+          "type": "integer"
+        },
+        "scale": {
+          "const": "samn_perelli_1_7",
+          "title": "Scale",
+          "type": "string"
+        },
+        "source_scale_label": {
+          "title": "Source Scale Label",
+          "type": "string"
+        },
+        "assessed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Assessed At"
+        }
+      },
+      "required": [
+        "value",
+        "scale",
+        "source_scale_label",
+        "assessed_at"
+      ],
+      "title": "Fatigue",
+      "type": "object"
+    },
+    "LegacyFatigue": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Value",
+          "type": "integer"
+        },
+        "scale": {
+          "const": "source_ordinal_1_10",
+          "title": "Scale",
+          "type": "string"
+        },
+        "source_scale_label": {
+          "title": "Source Scale Label",
+          "type": "string"
+        },
+        "source_path": {
+          "title": "Source Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "scale",
+        "source_scale_label",
+        "source_path"
+      ],
+      "title": "LegacyFatigue",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "source_format": {
+          "enum": [
+            "ayoub_raw_v1",
+            "amina_simulator_v1",
+            "canonical_v1",
+            "frontend_mock_v1"
+          ],
+          "title": "Source Format",
+          "type": "string"
+        },
+        "source_session_id": {
+          "format": "uuid",
+          "title": "Source Session Id",
+          "type": "string"
+        },
+        "source_record_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "source_sent_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source Sent At"
+        },
+        "received_at": {
+          "format": "date-time",
+          "title": "Received At",
+          "type": "string"
+        },
+        "ingest_id": {
+          "format": "uuid",
+          "title": "Ingest Id",
+          "type": "string"
+        },
+        "payload_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Payload Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_format",
+        "source_session_id",
+        "source_record_id",
+        "source_sent_at",
+        "received_at",
+        "ingest_id",
+        "payload_sha256"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "Window": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "Window",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "astronaut_id": {
+      "format": "uuid",
+      "title": "Astronaut Id",
+      "type": "string"
+    },
+    "mission_id": {
+      "format": "uuid",
+      "title": "Mission Id",
+      "type": "string"
+    },
+    "mission_day": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Mission Day"
+    },
+    "observed_at": {
+      "format": "date-time",
+      "title": "Observed At",
+      "type": "string"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "report_kind": {
+      "enum": [
+        "user_demo",
+        "source_snapshot",
+        "simulator_snapshot"
+      ],
+      "title": "Report Kind",
+      "type": "string"
+    },
+    "submitted_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Submitted At"
+    },
+    "reporting_window": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Window"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "sleep_hours": {
+      "anyOf": [
+        {
+          "maximum": 24,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Sleep Hours"
+    },
+    "fatigue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Fatigue"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "legacy_fatigue": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LegacyFatigue"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "hydration_intake_ml": {
+      "anyOf": [
+        {
+          "maximum": 10000,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Hydration Intake Ml"
+    },
+    "notes": {
+      "maxLength": 500,
+      "title": "Notes",
+      "type": "string"
+    },
+    "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    }
+  },
+  "required": [
+    "astronaut_id",
+    "mission_id",
+    "mission_day",
+    "observed_at",
+    "synthetic",
+    "report_kind",
+    "submitted_at",
+    "reporting_window",
+    "sleep_hours",
+    "fatigue",
+    "legacy_fatigue",
+    "hydration_intake_ml",
+    "notes",
+    "id",
+    "provenance"
+  ],
+  "title": "CheckIn",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

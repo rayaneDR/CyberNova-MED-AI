@@ -26,7 +26,7 @@ Use the header's **Demo controls** to select an empty response or service failur
 
 Check-ins save at `cybernova-check-ins-v1:<subjectId>` in localStorage, at most 30 records per astronaut. The crew selection defaults to Maya on page reload; reselect the astronaut to inspect their saved history. Do not enter real personal health information. An invalid existing history is preserved and reported, never overwritten. Review markers in the alert center last until leaving that screen.
 
-The input fatigue scale is 1–10 as requested; the preserved shared telemetry draft still allows 0–10 for its separate illustrative index. Intake is mL and is not converted into the fixture hydration index. Form maxima are validation constraints, not recommended targets.
+New input fatigue uses the proposed Samn–Perelli 1–7 scale per Ayoub's November 14 clarification. New records carry `fatigueScale: samn_perelli_1_7`; old v1 records are read as `legacy_demo_1_10` by their source format and displayed unchanged as /10. Reads do not rewrite storage or convert scores. The preserved shared telemetry draft and recorded fixtures remain separate legacy illustrative indices. Intake is mL and is not converted into the fixture hydration index. Form maxima are validation constraints, not recommended targets.
 
 ## Collaboration
 

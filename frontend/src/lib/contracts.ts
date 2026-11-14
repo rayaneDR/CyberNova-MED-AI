@@ -44,5 +44,5 @@ export interface WorkspaceData {
   observations: Observation[];
   radiation: RadiationSample[];
 }
-export interface CheckInInput { sleepHours: number; fatigueScore: number; hydrationMl: number; notes: string; }
-export interface CheckInRecord extends CheckInInput { id: string; subjectId: string; submittedAt: string; source: "mock"; }
+export interface CheckInInput { sleepHours: number; fatigueScore: number; fatigueScale: "samn_perelli_1_7"; hydrationMl: number; notes: string; }
+export type CheckInRecord = Omit<CheckInInput, "fatigueScale"> & { fatigueScale: "samn_perelli_1_7" | "legacy_demo_1_10"; id: string; subjectId: string; submittedAt: string; source: "mock"; };

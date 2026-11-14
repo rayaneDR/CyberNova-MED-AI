@@ -24,17 +24,24 @@ export async function getWorkspaceData(subjectId: string, scenario: DemoScenario
 
 const storageKey = (subjectId: string) => `cybernova-check-ins-v1:${subjectId}`;
 export function validateCheckIn(input: CheckInInput): Partial<Record<keyof CheckInInput, string>> {
+  const errors = validateCheckInFields(input, 7);
+  if (input.fatigueScale !== "samn_perelli_1_7") errors.fatigueScore = "Use the proposed Samn–Perelli 1–7 scale for new check-ins.";
+  return errors;
+}
+function validateCheckInFields(input: Omit<CheckInInput, "fatigueScale">, maximum: 7 | 10): Partial<Record<keyof CheckInInput, string>> {
   const errors: Partial<Record<keyof CheckInInput, string>> = {};
   if (!Number.isFinite(input.sleepHours) || input.sleepHours < 0 || input.sleepHours > 24) errors.sleepHours = "Enter sleep duration between 0 and 24 hours.";
-  if (!Number.isInteger(input.fatigueScore) || input.fatigueScore < 1 || input.fatigueScore > 10) errors.fatigueScore = "Choose a whole-number fatigue score from 1 to 10.";
+  if (!Number.isInteger(input.fatigueScore) || input.fatigueScore < 1 || input.fatigueScore > maximum) errors.fatigueScore = `Choose a whole-number fatigue score from 1 to ${maximum}.`;
   if (!Number.isFinite(input.hydrationMl) || input.hydrationMl < 0 || input.hydrationMl > 10000) errors.hydrationMl = "Enter intake between 0 and 10,000 mL. This is a form limit, not a recommendation.";
   if (input.notes.length > 500) errors.notes = "Keep notes to 500 characters or fewer.";
   return errors;
 }
 export function getCheckIns(subjectId: string): CheckInRecord[] {
   const parsed: unknown = JSON.parse(localStorage.getItem(storageKey(subjectId)) ?? "[]");
-  if (!Array.isArray(parsed) || !parsed.every((record) => record && typeof record === "object" && record.subjectId === subjectId && typeof record.id === "string" && typeof record.submittedAt === "string" && !Number.isNaN(Date.parse(record.submittedAt)) && record.source === "mock" && typeof record.notes === "string" && Object.keys(validateCheckIn(record)).length === 0)) throw new Error("Saved demo check-ins could not be read. Browser storage may be unavailable or contain invalid data.");
-  return parsed as CheckInRecord[];
+  if (!Array.isArray(parsed) || !parsed.every((record) => record && typeof record === "object" && record.subjectId === subjectId && typeof record.id === "string" && typeof record.submittedAt === "string" && !Number.isNaN(Date.parse(record.submittedAt)) && record.source === "mock" && typeof record.notes === "string" && [undefined, "legacy_demo_1_10", "samn_perelli_1_7"].includes(record.fatigueScale) && Object.keys(validateCheckInFields(record, record.fatigueScale === "samn_perelli_1_7" ? 7 : 10)).length === 0)) throw new Error("Saved demo check-ins could not be read. Browser storage may be unavailable or contain invalid data.");
+  // The original v1 storage format used 1–10. Label it by format, never by score.
+  // Read does not rewrite stored records or convert their numeric values.
+  return parsed.map((record) => ({ ...record, fatigueScale: record.fatigueScale ?? "legacy_demo_1_10" })) as CheckInRecord[];
 }
 export async function submitCheckIn(subjectId: string, input: CheckInInput): Promise<CheckInRecord> {
   if (!astronauts.some((person) => person.id === subjectId)) throw new Error("Choose a valid fictional crew member.");

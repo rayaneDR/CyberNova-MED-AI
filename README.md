@@ -32,7 +32,7 @@ Run these from `frontend/`. `typecheck` generates Next.js route types first, so 
 | Directory | Owner | Scope |
 | --- | --- | --- |
 | `frontend/` | Rayane (`rayaneDR`) | Next.js App Router, TypeScript, Tailwind CSS, Recharts, Lucide; integration and deployment |
-| `backend/` | Khawla | FastAPI, SQLite, API |
+| `backend/` | Rayane (`rayaneDR`) | FastAPI, SQLite, API; ownership transferred by team instruction, implementation pending |
 | `analytics/` | Ali | Statistical algorithms and alert generation |
 | `simulator/` | Amina | Simulated sensors and telemetry |
 | `research/` | Ayoub | Indicators, JSON specifications, scientific validity |
@@ -63,5 +63,7 @@ Public repository: [rayaneDR/CyberNova-MED-AI](https://github.com/rayaneDR/Cyber
 MIT licensed. Local initialization and validation results are recorded in `docs/verification.md`.
 
 See [frontend MVP handoff](docs/frontend-mvp.md) for screen behavior, integration boundaries, and review checks.
+
+Current integration planning: [v1 contract](docs/integration-contract-v1.md), [attached source review](docs/source-file-review.md), and [backend implementation plan](docs/backend-implementation-plan.md). New check-ins use the proposed Samn–Perelli 1–7 scale; legacy 1–10 records remain source-specific. No backend or live integration is implemented by these planning documents.
 
 Dependency limitation: npm reports seven moderate development-tool findings rooted in TypeScript ESLint's transitive minimatch dependency. A non-forcing audit dry run did not resolve them. ESLint 9 is deprecated but retained because ESLint 10 conflicts with the plugin peer ranges shipped by this Next.js configuration. See the verification report; do not use `--force` or bypass peer checks to hide this limitation.
