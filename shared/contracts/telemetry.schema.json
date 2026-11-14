@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CyberNova telemetry sample draft v0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "subjectId", "timestamp", "synthetic", "heartRateBpm", "spo2Percent", "respiratoryRatePerMin", "sleepHours", "fatigueScore", "hydrationPercent"],
+  "properties": {
+    "schemaVersion": { "const": "0.1" },
+    "subjectId": { "type": "string", "minLength": 1 },
+    "timestamp": { "type": "string", "format": "date-time", "pattern": "Z$" },
+    "synthetic": { "type": "boolean" },
+    "heartRateBpm": { "type": ["number", "null"], "minimum": 0 },
+    "spo2Percent": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+    "respiratoryRatePerMin": { "type": ["number", "null"], "minimum": 0 },
+    "sleepHours": { "type": ["number", "null"], "minimum": 0, "maximum": 24 },
+    "fatigueScore": { "type": ["number", "null"], "minimum": 0, "maximum": 10, "description": "Illustrative index; not clinically validated." },
+    "hydrationPercent": { "type": ["number", "null"], "minimum": 0, "maximum": 100, "description": "Illustrative index; not measured body hydration." }
+  }
+}

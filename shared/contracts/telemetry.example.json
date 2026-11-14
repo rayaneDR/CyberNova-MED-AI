@@ -1,0 +1,12 @@
+{
+  "schemaVersion": "0.1",
+  "subjectId": "demo-crew-01",
+  "timestamp": "2026-11-14T08:55:00.000Z",
+  "synthetic": true,
+  "heartRateBpm": 72,
+  "spo2Percent": 98,
+  "respiratoryRatePerMin": 16,
+  "sleepHours": 7.2,
+  "fatigueScore": 3,
+  "hydrationPercent": 76
+}
