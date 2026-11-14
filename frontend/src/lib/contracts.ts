@@ -22,9 +22,13 @@ export interface DashboardData {
 export type Screen = "overview" | "health" | "alerts" | "check-in" | "radiation" | "research";
 export type DemoScenario = "nominal" | "empty" | "error";
 export interface Astronaut { id: string; name: string; initials: string; role: string; }
+export type DataMode = "demo" | "live";
 export interface HistoricalSample extends TelemetrySample {
-  activity: "Rest" | "Exercise" | "Lab work";
+  activity: "Rest" | "Exercise" | "Lab work" | "Sleep" | "EVA prep" | "EVA active" | "Unknown";
   quality: "Complete" | "Signal gap";
+  channelQuality?: { heartRate: string; spo2: string; respiratoryRate: string };
+  missionDay?: number | null;
+  measurementId?: string;
 }
 export interface Observation {
   id: string;
@@ -34,15 +38,28 @@ export interface Observation {
   explanation: string;
   context: string;
   resolved: boolean;
+  source?: "mock" | "api";
+  acknowledgment?: { actorId: string; acknowledgedAt: string; note: string } | null;
 }
-export interface RadiationSample { day: string; dailyMicroSv: number; cumulativeMilliSv: number; }
+export interface RadiationSample { day: string; dailyMicroSv: number | null; cumulativeMilliSv: number | null; dailyDoseMsv?: number | null; sourceDoseRateMsvDay?: number | null; }
+export interface SensorQuality { channel: string; quality: string; connectivity: string; issueCodes: string[]; sourceStatus?: string | null; lastSampleAt?: string; }
+export interface RadiationReadingView {
+  id: string; observedAt: string; quantity: "daily_exposure_dose_msv" | "cumulative_mission_dose_msv" | "source_dose_rate_msv_day" | "source_interval_dose_msv" | "source_cumulative_dose_msv";
+  value: number | null; unit: "mSv" | "mSv/day"; quality: string; windowStart: string | null; windowEnd: string | null;
+}
 export interface WorkspaceData {
-  source: "mock";
+  source: "mock" | "api";
   synthetic: true;
   astronaut: Astronaut;
+  missionId?: string;
   samples: HistoricalSample[];
   observations: Observation[];
   radiation: RadiationSample[];
+  radiationReadings?: RadiationReadingView[];
+  sourceRates?: RadiationReadingView[];
+  sensorHealth?: SensorQuality[];
+  checkIns?: CheckInRecord[];
+  analyticsStatus?: "not_configured";
 }
 export interface CheckInInput { sleepHours: number; fatigueScore: number; fatigueScale: "samn_perelli_1_7"; hydrationMl: number; notes: string; }
-export type CheckInRecord = Omit<CheckInInput, "fatigueScale"> & { fatigueScale: "samn_perelli_1_7" | "legacy_demo_1_10"; id: string; subjectId: string; submittedAt: string; source: "mock"; };
+export type CheckInRecord = Omit<CheckInInput, "fatigueScale"> & { fatigueScale: "samn_perelli_1_7" | "legacy_demo_1_10"; id: string; subjectId: string; submittedAt: string; source: "mock" | "api"; };

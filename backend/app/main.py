@@ -14,6 +14,11 @@ from .db import get_db, initialize_database
 from . import models
 from .service import dump, iso, parse, session_for, persist_ingest, utcnow
 from .docs_contract_import import *  # noqa: F403
+from .response_models import (  # noqa: E402
+    AlertEnvelope, AlertsList, AnalyticsSummary, AstronautList, CheckIn,
+    CheckInList, HealthResponse, ItemOnly, ItemResponse, MeasurementList, RadiationList,
+    RadiationReading, Receipt,
+)
 
 @asynccontextmanager
 async def lifespan(_app):
@@ -44,19 +49,23 @@ def check_json(model, data):
     try: return model.model_validate_json(dump(data)).model_dump(mode="json")
     except ValidationError as e: raise HTTPException(422,detail={"error":{"code":"VALIDATION_ERROR","message":"Request does not match contract","details":jsonable_encoder(e.errors(include_url=False))}})
 
-@app.get("/health")
+def response_model(model, data):
+    # Validate from JSON so strict UUID and aware-datetime fields accept their wire representation.
+    return model.model_validate_json(dump(data))
+
+@app.get("/health",response_model=HealthResponse)
 def health(db:Session=Depends(get_db)):
     try: db.execute(select(1)); return {"status":"ok","contract_version":"1.0.0","storage":"ready","analytics":"not_configured","synthetic_only":True}
     except Exception: raise HTTPException(503,{"status":"unavailable","contract_version":"1.0.0","storage":"unavailable","analytics":"not_configured","synthetic_only":True})
 
-@app.get("/astronauts")
+@app.get("/astronauts",response_model=AstronautList)
 def astronauts(mission_id:uuid.UUID,db:Session=Depends(get_db)):
     rows=db.scalars(select(models.AstronautRow).where(models.AstronautRow.mission_id==str(mission_id)).order_by(models.AstronautRow.id)).all()
     out=[]
     for a in rows:
         aliases=db.scalars(select(models.AliasRow).where(models.AliasRow.astronaut_id==a.id)).all()
         out.append({"id":a.id,"mission_id":a.mission_id,"display_name":a.display_name,"role":a.role,"aliases":[{"namespace":x.namespace,"value":x.value} for x in aliases],"synthetic":True})
-    return {"items":out,"next_cursor":None,"synthetic":True}
+    return response_model(AstronautList,{"items":out,"next_cursor":None,"synthetic":True})
 
 def page(db,kind,mission_id,astronaut_id,from_,to,limit,quantity=None,report_kind=None,fatigue_scale=None,cursor=None):
     filters={"kind":kind,"mission_id":str(mission_id),"astronaut_id":str(astronaut_id),"from":iso(from_) if from_ else None,"to":iso(to) if to else None,"quantity":quantity,"report_kind":report_kind,"fatigue_scale":fatigue_scale}
@@ -90,11 +99,11 @@ def page(db,kind,mission_id,astronaut_id,from_,to,limit,quantity=None,report_kin
 def common_params(mission_id,astronaut_id,from_,to,limit):
     if from_ and to and from_>=to: raise HTTPException(422,"from must be earlier than to")
 
-@app.get("/measurements")
+@app.get("/measurements",response_model=MeasurementList)
 def measurements(mission_id:uuid.UUID,astronaut_id:uuid.UUID,from_:datetime|None=Query(None,alias="from"),to:datetime|None=None,limit:Annotated[int,Query(ge=1,le=500)]=100,cursor:str|None=None,db:Session=Depends(get_db)):
     common_params(mission_id,astronaut_id,from_,to,limit); items,next_cursor=page(db,"measurement",mission_id,astronaut_id,from_,to,limit,cursor=cursor)
     ids=[x["id"] for x in items]; health=[json.loads(h.payload_json) for h in db.scalars(select(models.SensorHealthRow).where(models.SensorHealthRow.measurement_id.in_(ids))).all()] if ids else []
-    return {"items":items,"next_cursor":next_cursor,"synthetic":True,"sensor_health":health}
+    return response_model(MeasurementList,{"items":items,"next_cursor":next_cursor,"synthetic":True,"sensor_health":health})
 
 def canonical_write(db,source_session_id,fmt,model,data,key,authorization):
     auth_write(authorization); s=session_for(db,str(source_session_id),fmt)
@@ -126,7 +135,7 @@ def canonical_write(db,source_session_id,fmt,model,data,key,authorization):
         db.rollback(); raise err(e)
     return {"item":item,"duplicate":False} if kind!="measurement" else receipt,False
 
-@app.post("/measurements",status_code=201)
+@app.post("/measurements",status_code=201,response_model=Receipt)
 async def post_measurements(request:Request,source_session_id:uuid.UUID,input_format:str=Query(...),idempotency_key:str|None=Header(None,alias="Idempotency-Key"),authorization:str|None=Header(None),db:Session=Depends(get_db)):
     raw=(await request.body())
     if len(raw)>1048576: raise HTTPException(413,"Request body exceeds 1 MiB")
@@ -147,7 +156,7 @@ async def post_measurements(request:Request,source_session_id:uuid.UUID,input_fo
 
 from fastapi.responses import JSONResponse
 
-@app.post("/ingest/simulator",status_code=201)
+@app.post("/ingest/simulator",status_code=201,response_model=Receipt)
 async def ingest_simulator(request:Request,source_session_id:uuid.UUID,authorization:str|None=Header(None),db:Session=Depends(get_db)):
     auth_write(authorization); raw=await request.body()
     if len(raw)>1048576: raise HTTPException(413,"Request body exceeds 1 MiB")
@@ -169,27 +178,27 @@ def post_resource(kind,model,fmt):
         return JSONResponse(status_code=200 if duplicate else 201,content=result)
     return route
 
-app.post("/checkins",status_code=201)(post_resource("checkin",CheckInInput,"canonical_v1"))
-app.post("/radiation",status_code=201)(post_resource("radiation",RadiationInput,"canonical_v1"))
+app.post("/checkins",status_code=201,response_model=ItemResponse[CheckIn])(post_resource("checkin",CheckInInput,"canonical_v1"))
+app.post("/radiation",status_code=201,response_model=ItemResponse[RadiationReading])(post_resource("radiation",RadiationInput,"canonical_v1"))
 
-@app.get("/checkins")
+@app.get("/checkins",response_model=CheckInList)
 def checkins(mission_id:uuid.UUID,astronaut_id:uuid.UUID,report_kind:str|None=None,fatigue_scale:str|None=None,from_:datetime|None=Query(None,alias="from"),to:datetime|None=None,limit:Annotated[int,Query(ge=1,le=500)]=100,cursor:str|None=None,db:Session=Depends(get_db)):
     common_params(mission_id,astronaut_id,from_,to,limit); items,next_cursor=page(db,"checkin",mission_id,astronaut_id,from_,to,limit,report_kind=report_kind,fatigue_scale=fatigue_scale,cursor=cursor)
-    return {"items":items,"next_cursor":next_cursor,"synthetic":True}
+    return response_model(CheckInList,{"items":items,"next_cursor":next_cursor,"synthetic":True})
 
-@app.get("/radiation")
+@app.get("/radiation",response_model=RadiationList)
 def radiation(mission_id:uuid.UUID,astronaut_id:uuid.UUID,quantity:str|None=None,from_:datetime|None=Query(None,alias="from"),to:datetime|None=None,limit:Annotated[int,Query(ge=1,le=500)]=100,cursor:str|None=None,db:Session=Depends(get_db)):
     common_params(mission_id,astronaut_id,from_,to,limit)
     if quantity and quantity not in {"daily_exposure_dose_msv","cumulative_mission_dose_msv","source_dose_rate_msv_day","source_interval_dose_msv","source_cumulative_dose_msv"}: raise HTTPException(422,"Unknown radiation quantity")
     items,next_cursor=page(db,"radiation",mission_id,astronaut_id,from_,to,limit,quantity=quantity,cursor=cursor)
-    return {"items":items,"next_cursor":next_cursor,"synthetic":True}
+    return response_model(RadiationList,{"items":items,"next_cursor":next_cursor,"synthetic":True})
 
-@app.get("/analytics/summary")
+@app.get("/analytics/summary",response_model=AnalyticsSummary)
 def analytics_summary(mission_id:uuid.UUID,astronaut_id:uuid.UUID,db:Session=Depends(get_db)):
     latest=db.scalar(select(models.ResourceRow.event_at).where(models.ResourceRow.kind=="measurement",models.ResourceRow.mission_id==str(mission_id),models.ResourceRow.astronaut_id==str(astronaut_id)).order_by(models.ResourceRow.event_at.desc()).limit(1))
-    return {"astronaut_id":str(astronaut_id),"mission_id":str(mission_id),"analytics_status":"not_configured","baseline_status":"unavailable","statistical_observations_count":None,"latest_measurement_at":latest,"summary":None,"synthetic":True}
+    return response_model(AnalyticsSummary,{"astronaut_id":str(astronaut_id),"mission_id":str(mission_id),"analytics_status":"not_configured","baseline_status":"unavailable","statistical_observations_count":None,"latest_measurement_at":latest,"summary":None,"synthetic":True})
 
-@app.get("/alerts")
+@app.get("/alerts",response_model=AlertsList)
 def alerts(mission_id:uuid.UUID,astronaut_id:uuid.UUID,kind:str|None=None,acknowledged:bool|None=None,db:Session=Depends(get_db)):
     rows=db.scalars(select(models.ResourceRow).where(models.ResourceRow.kind=="measurement",models.ResourceRow.mission_id==str(mission_id),models.ResourceRow.astronaut_id==str(astronaut_id))).all(); items=[]
     for row in rows:
@@ -202,22 +211,22 @@ def alerts(mission_id:uuid.UUID,astronaut_id:uuid.UUID,kind:str|None=None,acknow
             if acknowledged is not None and (ack is not None)!=acknowledged: continue
             items.append(item)
     items.sort(key=lambda x:(x["detected_at"],x["id"]))
-    return {"items":items,"next_cursor":None,"synthetic":True,"analytics_status":"not_configured"}
+    return response_model(AlertsList,{"items":items,"next_cursor":None,"synthetic":True,"analytics_status":"not_configured"})
 
-@app.patch("/alerts/{alert_id}/acknowledge")
+@app.patch("/alerts/{alert_id}/acknowledge",response_model=ItemOnly[AlertEnvelope])
 def acknowledge(alert_id:uuid.UUID,data:AcknowledgeInput,authorization:str|None=Header(None),db:Session=Depends(get_db)):
     auth_write(authorization)
     # Only an alert deterministically derived from a stored sensor issue can be acknowledged.
     candidates=alerts_for_ack(db)
-    item=next((x for x in candidates if x["id"]==str(alert_id)),None)
+    item=next((x.model_dump(mode="json") for x in candidates if x.id==str(alert_id)),None)
     if not item: raise HTTPException(404,"Alert not found")
     ack=db.get(models.AckRow,str(alert_id))
     if not ack:
         actor=os.getenv("ACK_ACTOR_ID","local-operator"); ack=models.AckRow(alert_id=str(alert_id),actor_id=actor,acknowledged_at=utcnow(),note=data.note); db.add(ack); db.commit()
     item["acknowledgment"]={"actor_id":ack.actor_id,"acknowledged_at":ack.acknowledged_at,"note":ack.note}
-    return {"item":item}
+    return response_model(ItemOnly[AlertEnvelope],{"item":item})
 
 def alerts_for_ack(db):
     result=[]
-    for a in db.scalars(select(models.AstronautRow)).all(): result.extend(alerts(a.mission_id,a.id,None,None,db)["items"])
+    for a in db.scalars(select(models.AstronautRow)).all(): result.extend(alerts(a.mission_id,a.id,None,None,db).items)
     return result

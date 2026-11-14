@@ -1,6 +1,6 @@
 # Integration contract v1 — proposed, 2026-11-14
 
-This is a design for the next task, not a running backend. It supersedes the earlier v0.1 proposal for new integration work without editing shared/contracts/ or teammate modules. `feature/backend-rayane` contains the frontend at `72d9bcd`; main remains unmerged. Rayane owns backend and frontend integration under the latest team instruction. Amina owns simulation, Ali owns baselines/statistics, and Ayoub owns scientific review.
+This document began as a proposed design. As of the current `feature/backend-rayane` work, FastAPI/SQLite implements the MVP routes, the frontend supports explicit Live API mode, and the actual OpenAPI response schemas are available at `/openapi.json`. The design remains the scientific and normalization reference; use the running OpenAPI document as the authoritative wire shape where implementation details differ. This integration preserves `shared/contracts/` and teammate modules. Main remains unmerged. Rayane owns backend and frontend integration; Amina owns simulation, Ali owns baselines/statistics, and Ayoub owns scientific review.
 
 ## Decisions incorporated from Ayoub
 
@@ -65,7 +65,7 @@ Repeated aliases must agree numerically including null consistency. A conflictin
 
 ## API conventions
 
-Proposed base: `http://localhost:8000`, exactly the unprefixed routes requested below. No endpoint exists yet. JSON only, body ≤1 MiB, UTC timestamps, same-object schemas for canonical write bodies/read objects. `application/json` writes require an explicitly registered `source_session_id` UUID query parameter binding mission, permitted aliases, source format and synthetic provenance. It is not an authentication secret. A seed/admin CLI registers sessions in the next task; no public registration endpoint is implied.
+Proposed local base: `http://localhost:8000`, using the unprefixed routes requested below. These routes are now implemented and documented by the live OpenAPI spec; schema examples in this section remain normative design examples and are not guaranteed to match every response envelope byte-for-byte. JSON only, body ≤1 MiB, UTC timestamps, same-object schemas for canonical write bodies/read objects. `application/json` writes require an explicitly registered `source_session_id` UUID query parameter binding mission, permitted aliases, source format and synthetic provenance. It is not an authentication secret. The seed/admin CLI registers local demo sessions; no public registration endpoint is implied.
 
 Canonical writes also require `Idempotency-Key: <UUID>`. Source raw records use their record ID; simulator packets use nested payload ID. Server uniqueness: `(source_session_id, source_record_id)`. Exact-byte replay returns HTTP 200 and the original receipt/resources; same key with different bytes returns 409. Preserve simulator sequence as metadata, never as a global key. Start a new run/session UUID on simulator restart, even on the same day. Retried identical packets reuse the same session and ID. Out-of-order event times are accepted and stored as historical; they cannot overwrite “latest” by receipt order.
 
@@ -160,7 +160,7 @@ Response: `{item:<same AlertEnvelope with acknowledgment populated from authenti
 
 ## Backend-to-frontend mapping
 
-Next task changes the adapter/types, not the source modules. Preserve mock mode as an explicit demo choice; API error must show an error, not silently invoke getWorkspaceData fixtures.
+The implemented frontend adapter/types leave source modules intact. Preserve mock mode as an explicit demo choice; API error must show an error, not silently invoke getWorkspaceData fixtures.
 
 | Current frontend field/behavior | v1 mapping / necessary UI adjustment |
 | --- | --- |
@@ -177,7 +177,7 @@ Next task changes the adapter/types, not the source modules. Preserve mock mode 
 | Cumulative exposure | Use mission-bound canonical cumulative totals when available; no month reset. Do not re-sum source cumulative totals or double-count a day |
 | NASA cards | Reviewed source claims/limitations; no NASA dataset analyzed unless an actual versioned dataset pipeline is added and documented |
 
-This task makes only the specifically requested fatigue form/validation/history correction. Radiation UI migration and live adapter work remain the next task; the existing synthetic rate chart remains explicitly a rate fixture until then.
+The current Live frontend maps canonical accumulated radiation dose and mission cumulative dose independently from source dose rates. Demo mode retains its clearly labeled synthetic rate fixture. Check-in form and API persistence use Samn–Perelli 1–7; source 1–10 remains source-specific.
 
 ## Science activation and unresolved review
 
@@ -185,6 +185,6 @@ All `evaluation_rules.json` rules remain disabled, including entries named activ
 
 ## Design validation
 
-Run `python docs/contracts/v1_design.py` to generate schemas. `python work/validate_contract_design.py` from the original workspace validates every example using installed Pydantic 2.14.1, exercises required rejection cases, and checks JSON syntax. These are contract-design tests, not API/database or clinical tests. Full source syntax/CLI/loopback checks and immutable file hashes are documented separately. No live backend success is claimed.
+Run `python docs/contracts/v1_design.py` to generate schemas. `python work/validate_contract_design.py` from the original workspace validates every example using installed Pydantic 2.14.1, exercises required rejection cases, and checks JSON syntax. These are contract-design tests, not API/database or clinical tests. The original design-review note made no live backend success claim; implementation and local runtime verification are recorded separately in the integration task report.
 
 Actual results: eleven example models validated; twenty positive/negative cases passed; eleven generated JSON Schema documents parsed. An independent JSON Schema engine was not available, so no claim of separate JSON Schema engine validation is made. `node work/test_fatigue_boundary.cjs` passed canonical bounds, legacy preservation, read-without-rewrite and scale-tagged submission checks. A production Playwright check verified exactly seven choices, legacy /10 history, a saved /7 report, and no overflow at 390px. `npm run lint`, `npm run typecheck`, and `npm run build` all passed. The first schema-generation attempt used the wrong working directory and failed; the corrected repository-root command succeeded before these validation results were reported.
