@@ -7,7 +7,7 @@
 - GitHub identity and public repository were verified in the connected GitHub integration as `rayaneDR`; GitHub default branch `main` was at `24c1046`, and public `feature/frontend` was at `72d9bcd`.
 - `git fetch origin --prune` succeeded. No remote feature/backend/analytics branch was present before this delivery. No existing local modifications were present before edits.
 - The feature history contains `origin/main`; `git merge-base --is-ancestor origin/main HEAD` succeeded. No merge was performed.
-- `gh` is not installed in this Windows environment. GitHub connector is available.
+- `gh` is not installed in this Windows environment. GitHub connector is available. A public release PR is open at https://github.com/rayaneDR/CyberNova-MED-AI/pull/1; it targets `main` and is mergeable. No merge was performed.
 
 ## Exact checks run
 
@@ -41,7 +41,7 @@ The OSDR OSD-53 catalog and sample metadata API returned study and sample metada
 
 ## Deployment and security status
 
-No public frontend or API deployment was performed. The API contains writable demo endpoints; the current browser client does not send a write token. The local backend is documented for loopback-only use. Do not expose writes on a public host until an authenticated proxy/client design, HTTPS, persistence, CORS, and environment configuration are implemented and reviewed. The current product operates on synthetic demo data only.
+The frontend is deployed to https://cybernova-med-ai.vercel.app (Vercel production deployment `DT8kaTmpqhsk9YzxgRvi8XyYgwXB`, ready on 2026-11-14). Public HTTP checks returned 200 for `/`, `/research`, and `/check-in`; each response contained the synthetic Demo label. Vercel dry-run confirmed `.env.local` and `.vercel` were excluded. No backend URL or secret was configured in the Vercel project, so this public site uses synthetic Demo fixtures only. The API contains writable demo endpoints; the browser client does not send a write token. The local backend is documented for loopback-only use. Do not expose writes publicly until an authenticated proxy/client design, HTTPS, persistence, CORS, and environment configuration are implemented and reviewed.
 
 ## Pitch artifact status
 

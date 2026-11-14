@@ -6,6 +6,8 @@ CyberNova X brings synthetic astronaut telemetry, data-quality observations, dai
 
 ![CyberNova MED-AI desktop dashboard](docs/assets/mission-overview.png)
 
+**Public demo:** [cybernova-med-ai.vercel.app](https://cybernova-med-ai.vercel.app) - synthetic Demo fixtures only; no public API or database is connected.
+
 > Independent NASA Space Apps Challenge Meknes 2026 project. The crew, telemetry, check-ins, radiation, and backend demo records are synthetic. NASA is not a sponsor or endorser.
 
 ## The problem
@@ -95,7 +97,9 @@ NASA Open Science Data Repository (OSDR) catalog and NASA Human Research Program
 
 ## Collaboration and submission
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the team workflow. English entry text is in [docs/SUBMISSION.md](docs/SUBMISSION.md), the timed six-screen walkthrough is in [docs/DEMO_RUNBOOK.md](docs/DEMO_RUNBOOK.md), and the pitch script and Q&A are in `docs/PITCH_SCRIPT.md` and `docs/PITCH_QA.md`. The editable seven-slide deck and PDF are in [`submission/`](submission/).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the team workflow.
+
+The complete project is on [`release/space-apps-2026`](https://github.com/rayaneDR/CyberNova-MED-AI/tree/release/space-apps-2026), pending review in [PR #1](https://github.com/rayaneDR/CyberNova-MED-AI/pull/1). The default `main` branch has not been changed. The public GitHub repository is [rayaneDR/CyberNova-MED-AI](https://github.com/rayaneDR/CyberNova-MED-AI). English entry text is in [docs/SUBMISSION.md](docs/SUBMISSION.md), the timed six-screen walkthrough is in [docs/DEMO_RUNBOOK.md](docs/DEMO_RUNBOOK.md), and the pitch script and Q&A are in `docs/PITCH_SCRIPT.md` and `docs/PITCH_QA.md`. The editable seven-slide deck and PDF are in [`submission/`](submission/).
 
 ## License
 

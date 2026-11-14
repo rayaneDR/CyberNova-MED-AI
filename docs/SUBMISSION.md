@@ -1,6 +1,6 @@
 # NASA Space Apps Challenge submission copy
 
-**Project title:** CyberNova MED-AI  �  **Team:** CyberNova X  �  **Challenge:** Create Health Monitoring Software for Astronauts on Space Missions
+**Project title:** CyberNova MED-AI  ·  **Team:** CyberNova X  ·  **Challenge:** Create Health Monitoring Software for Astronauts on Space Missions
 
 ## Project summary
 
@@ -12,7 +12,7 @@ Long-duration space missions require teams to review human-health observations a
 
 ## Solution
 
-A six-screen dashboard presents overview metrics, historical trends and quality, observation history, a Samn–Perelli 1–7 fatigue/sleep/hydration check-in, radiation tracking with strict unit and time-period distinctions, and NASA research context. FastAPI validates synthetic simulator records and stores records in SQLite. The frontend explicitly distinguishes deterministic Demo fixtures from Live synthetic API mode.
+A six-screen dashboard presents overview metrics, historical trends and quality, observation history, a Samnâ€“Perelli 1â€“7 fatigue/sleep/hydration check-in, radiation tracking with strict unit and time-period distinctions, and NASA research context. FastAPI validates synthetic simulator records and stores records in SQLite. The frontend explicitly distinguishes deterministic Demo fixtures from Live synthetic API mode.
 
 ## Innovation
 
@@ -40,6 +40,8 @@ Rayane (team lead, frontend, integration, backend); Khawla (original backend/API
 
 ## Links
 
+- Public demo (synthetic Demo mode): https://cybernova-med-ai.vercel.app
+- Complete project branch: https://github.com/rayaneDR/CyberNova-MED-AI/tree/release/space-apps-2026 (PR #1 is open; `main` remains unchanged until team review)
 - Repository: https://github.com/rayaneDR/CyberNova-MED-AI
 - Challenge: https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/
 - NASA OSDR OSD-53: https://osdr.nasa.gov/bio/repo/data/studies/OSD-53
