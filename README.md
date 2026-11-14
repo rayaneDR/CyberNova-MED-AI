@@ -1,69 +1,102 @@
-# CyberNova-MED-AI
+# CyberNova MED-AI
 
-CyberNova X · NASA Space Apps Challenge Meknes 2026 participant project.
+**An explainable, non-diagnostic crew-health monitoring demonstrator for space missions.**
 
-A synthetic crew-wellbeing telemetry demonstrator. The frontend has six interactive mission-control screens; Python modules are reserved for their owners and are not implemented here.
+CyberNova X brings synthetic astronaut telemetry, data-quality observations, daily self-reports, and radiation exposure tracking into one responsive mission-control workspace.
 
-**Local pitch submission: Sunday, November 15, 2026 at 12:30 Morocco time (Africa/Casablanca).** Deadline supplied by the team; verify event instructions separately.
+![CyberNova MED-AI desktop dashboard](docs/assets/mission-overview.png)
 
-## Run the demo
+> Independent NASA Space Apps Challenge Meknes 2026 project. The crew, telemetry, check-ins, radiation, and backend demo records are synthetic. NASA is not a sponsor or endorser.
 
-Use Node.js 24 LTS and npm 11 (Node 22 also supported).
+## The problem
+
+Long-duration missions need a way to review changing crew observations alongside their source quality and mission context. Missing sensor data must remain visibly missing; an unusual measurement is not a diagnosis.
+
+## What we built
+
+- Six responsive screens: overview, health trends, observations, daily check-in, radiation tracking, and research context.
+- Explicit Demo and Live API modes. Live failures stay visible; they never silently load demo fixtures.
+- FastAPI + SQLite ingestion and persistence for synthetic simulator measurements, check-ins, and radiation readings.
+- An explainable engineering demonstration of astronaut-specific, activity-specific rolling median/MAD and EWMA observations, with warm-up and sustained-sample requirements. Ali's review is required before calling the parameters scientifically validated.
+- Sensor-data issues remain separate from statistical observations. Acknowledgment means reviewed operationally, not medically resolved.
+- Radiation rate, completed 24-hour dose, and cumulative mission dose remain distinct quantities with explicit provenance. No unverified limits are applied.
+- NASA OSDR OSD-53 **catalog metadata snapshot** on the research screen; no molecular expression values or NASA biometric dataset are analyzed.
+
+## Architecture and data flow
+
+```text
+Amina's synthetic simulator ──> FastAPI validation/adapters ──> SQLite
+                                          │                       │
+                                      analytics                 typed API
+                                    median/MAD/EWMA                 │
+                                                                  ▼
+Rayane's Next.js App Router <── explicit Live mode / Demo fixtures
+Ayoub's research metadata ──> sourced context (not telemetry)
+```
+
+Khawla's backend work was taken over and is maintained by Rayane. Ali owns review and future evolution of statistical methods; the current integration-owned engine is disclosed in [analytics integration notes](docs/analytics-integration.md). Amina's simulator and Ali's original analytics prototypes are preserved.
+
+## Tech stack
+
+Next.js App Router, React, TypeScript, Tailwind CSS, Recharts, Lucide, FastAPI, Pydantic, SQLAlchemy, SQLite, Python, and pytest. See [architecture](docs/architecture.md) and the [v1 integration contract](docs/integration-contract-v1.md).
+
+## Run locally
+
+### Backend (PowerShell, repository root)
+
+```powershell
+python -m venv backend/.venv
+backend/.venv/Scripts/python -m pip install -r backend/requirements.txt
+backend/.venv/Scripts/python -m backend.app.cli init-db
+backend/.venv/Scripts/python -m backend.app.cli seed-demo
+backend/.venv/Scripts/python -m uvicorn backend.app.main:app --host 127.0.0.1 --port 8000
+```
+
+`seed-demo` prints the mission, astronaut, and source-session UUIDs. Save these for simulator runs. API documentation is at http://127.0.0.1:8000/docs. To run tests: `backend/.venv/Scripts/python -m pytest backend/tests -q`.
+
+### Frontend (second PowerShell window)
 
 ```powershell
 cd frontend
 npm ci
+Copy-Item ..\.env.example .env.local # optional; fill mission/session UUIDs from seed-demo
 npm run dev
 ```
 
-Open http://localhost:3000. No API, database, credentials, or environment file is required. To prepare future configuration, copy the root `.env.example` to `frontend/.env.local`. Its API URL is reserved and not consumed yet.
+Open http://localhost:3000. Demo mode needs no backend. Live mode requires `NEXT_PUBLIC_API_BASE_URL` and `NEXT_PUBLIC_MISSION_ID`; live check-in submissions also need `NEXT_PUBLIC_SOURCE_SESSION_ID` from `seed-demo`. The local backend example binds to loopback and supports the local demo. The browser client does not send a write token, so do not expose a writable backend publicly; shared deployment needs an authenticated proxy/client flow first. Never put a write token in a `NEXT_PUBLIC_*` variable. The backend has a separate server-only environment example.
 
-```powershell
-npm run lint
-npm run typecheck
-npm run build
-npm start
-```
+### Simulator and reproducible walkthrough
 
-Run these from `frontend/`. `typecheck` generates Next.js route types first, so it works on a clean checkout. `npm start` serves the production build after `npm run build`.
+The API seed command gives a registered `amina_simulator_v1` source session. Run Amina's unchanged simulator against that session as documented in [backend setup](backend/README.md), then select Live mode in the dashboard. The exact 60–75 second walkthrough, fixed packet counts, and reset safety are in [the demo runbook](docs/DEMO_RUNBOOK.md). The original simulator file is maintained by its owner and is not copied or modified by this repository integration.
 
-## Ownership and structure
+## Statistical method (engineering demo)
 
-| Directory | Owner | Scope |
-| --- | --- | --- |
-| `frontend/` | Rayane (`rayaneDR`) | Next.js App Router, TypeScript, Tailwind CSS, Recharts, Lucide; integration and deployment |
-| `backend/` | Rayane (`rayaneDR`) | FastAPI, SQLite persistence, source adapters and API integration |
-| `analytics/` | Ali | Statistical algorithms and alert generation |
-| `simulator/` | Amina | Simulated sensors and telemetry |
-| `research/` | Ayoub | Indicators, JSON specifications, scientific validity |
-| `shared/contracts/` | All owners, coordinated by Rayane | Draft cross-module payloads |
-| `docs/` | Rayane + team | Architecture, contracts, verification |
-| `.github/` | Rayane | Frontend CI, pull request template |
+Eligible records are filtered by exact metric unit, quality, source and activity context. The current backend uses a median and robust MAD scale plus EWMA to identify only sustained deviations after warm-up. Its parameters are configurable demonstration values, not clinical cutoffs or a validated operational protocol. It does not diagnose, predict health outcomes, or recommend treatment. Full eligibility and review requirements are in [analytics integration](docs/analytics-integration.md).
 
-## Current behavior
+## NASA research and data provenance
 
-- Six routes: overview, health monitoring, alert center, daily check-in, radiation monitoring, and NASA research.
-- Three fictional astronauts; global selection updates the session, charts, observations, and sensor status.
-- Telemetry charts offer 6h/24h/3-day ranges, signal selection, and accessible exact-value tables with activity and quality context. Missing readings remain gaps.
-- The 72-hour synthetic session ends November 14, 2026 at 12:00 UTC. It is recorded historical data, not live telemetry.
-- Alert filters, authored explanations, history, and session-local review actions distinguish sensor failures from statistical deviations. No anomaly detection algorithm runs in the frontend.
-- Validated daily check-ins save through the mock adapter to browser-local storage, separately for each astronaut. They do not alter the recorded fixture summaries. Hydration intake in mL is distinct from the illustrative hydration percentage index.
-- Radiation charts show invented daily rates and cumulative exposure with 7/14-day ranges, unit conversion, and no hazard thresholds.
-- `frontend/src/lib/data-source.ts` is the integration boundary. New workspace fixtures live in `mission-fixtures.ts`; the initial `mock-data.ts` fixture and v0.1 telemetry types remain available. No API is contacted.
-- Demo controls expose loading, empty, and service-error states. NASA research remains readable independently of telemetry service state.
-- Fatigue and hydration indices are illustrative, not validated measurements or medical scores. No NASA datasets are analyzed.
-- No diagnosis, clinical thresholds, risk prediction, or automatic treatment advice. No model has been trained and no NASA endorsement is implied by the project name.
+The application uses NASA references as context and displays a small snapshot of NASA OSDR OSD-53 **catalog metadata** (sample phases and study description). It does not ingest or analyze OSD-53 processed molecular values, and OSD-53 is not the dashboard's biometric data. The actual measurements shown by the product are synthetic simulator records or deterministic demo fixtures. Dataset provenance and limitations are detailed in [NASA data provenance](docs/nasa-data-provenance.md).
 
-## Collaborate
+## Responsible use and limitations
 
-See [CONTRIBUTING.md](CONTRIBUTING.md), [architecture](docs/architecture.md), and [draft API contracts](docs/api-contracts-draft.md). Research starting points are in [research/README.md](research/README.md). No NASA data is bundled; all fixture values are invented.
+This is a hackathon research and engineering demonstrator, not a medical device. It cannot diagnose, establish fitness for duty, or advise treatment. Synthetic values cannot establish human-spaceflight outcomes. No physical sensors are connected, no official NASA threshold is implemented, and no NASA endorsement is implied. Have domain reviewers approve scientific terminology, units, alert settings, data governance, and intended use before any real operational or personal-data deployment.
 
-Public repository: [rayaneDR/CyberNova-MED-AI](https://github.com/rayaneDR/CyberNova-MED-AI). Created through the connected GitHub account and pushed from the local repository on November 14, 2026. The default branch is `main`; the actual Git remote is `https://github.com/rayaneDR/CyberNova-MED-AI.git`.
+## Team
 
-MIT licensed. Local initialization and validation results are recorded in `docs/verification.md`.
+- **Rayane** — team lead; frontend, integration, backend, deployment coordination.
+- **Khawla** — original backend/API contribution; backend handoff to Rayane.
+- **Ali** — statistical analytics ownership and review.
+- **Amina** — sensor simulator and synthetic telemetry.
+- **Ayoub** — indicator specifications, research references, scientific review.
 
-See [frontend MVP handoff](docs/frontend-mvp.md) for screen behavior, integration boundaries, and review checks.
+## Acknowledgments
 
-Current integration references: [v1 contract](docs/integration-contract-v1.md), [attached source review](docs/source-file-review.md), and [backend implementation plan](docs/backend-implementation-plan.md). The local FastAPI/SQLite MVP is in [backend/README.md](backend/README.md); it supports typed synthetic ingestion and keeps Ali analytics explicitly unavailable. New check-ins use the proposed Samn–Perelli 1–7 scale; legacy 1–10 records remain source-specific.
+NASA Open Science Data Repository (OSDR) catalog and NASA Human Research Program resources are cited as research context; sources and access details appear in the app and docs. This independent project is not affiliated with or endorsed by NASA.
 
-Dependency limitation: npm reports seven moderate development-tool findings rooted in TypeScript ESLint's transitive minimatch dependency. A non-forcing audit dry run did not resolve them. ESLint 9 is deprecated but retained because ESLint 10 conflicts with the plugin peer ranges shipped by this Next.js configuration. See the verification report; do not use `--force` or bypass peer checks to hide this limitation.
+## Collaboration and submission
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the team workflow. English entry text is in [docs/SUBMISSION.md](docs/SUBMISSION.md), the timed six-screen walkthrough is in [docs/DEMO_RUNBOOK.md](docs/DEMO_RUNBOOK.md), and the pitch script and Q&A are in `docs/PITCH_SCRIPT.md` and `docs/PITCH_QA.md`. The editable seven-slide deck and PDF are in [`submission/`](submission/).
+
+## License
+
+MIT. See [LICENSE](LICENSE).
