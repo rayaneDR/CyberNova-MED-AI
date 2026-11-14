@@ -1,33 +1,21 @@
-# Pitch Q&A preparation
+# Jury questions and answers
 
-**What is actually NASA data here?**
+## 1. What NASA data does the project actually use?
 
-Only derived catalog metadata counts from NASA OSDR OSD-53. No gene-expression values or biometric records feed the dashboard. Telemetry and radiation values are synthetic.
+The research screen includes a small snapshot derived from NASA OSDR OSD-53 catalog sample metadata. It represents thirteen catalog records grouped by the study's preflight, postflight and control metadata. No processed gene-expression values or NASA physiological measurements are analyzed. Dashboard telemetry and radiation values are synthetic.
 
-**Does the system diagnose a health problem?**
+## 2. Does CyberNova diagnose a condition or recommend treatment?
 
-No. It surfaces source-quality issues separately from sustained statistical deviations. Both need human context; neither is a medical alert or diagnosis.
+No. It presents measurements, quality issues and statistical observations for human review. It does not diagnose, recommend medication or provide treatment instructions. The analytical settings are engineering demo parameters and need scientific review.
 
-**How does the anomaly method work?**
+## 3. How are statistical observations generated?
 
-It filters by source, channel quality, exact unit, astronaut and activity context; establishes a rolling median/MAD baseline; adds an EWMA signal; then requires configured warm-up and persistence. It is a non-clinical engineering demonstrator with settings pending review.
+The current integration uses astronaut-, metric- and activity-specific context, a rolling median/MAD baseline, EWMA context and persistence after warm-up. Sensor quality events follow a separate path. This is a transparent engineering demonstration, not a validated medical method or threshold.
 
-**Why no NASA heart-rate or SpO2 dataset?**
+## 4. How do you distinguish sensor dropout and radiation quantities?
 
-The verified OSD-53 catalog describes whole-blood gene-expression samples, not those vital signs. We chose honest metadata context instead of relabeling an unrelated dataset.
+Missing or invalid sensor data stay missing and are shown as a data-quality observation; they are not interpreted as physiology. Radiation records retain their quantity and units: a dose rate in mSv/day is not automatically an accumulated 24-hour dose in mSv, and cumulative mission dose is separate. The MVP visualizes synthetic radiation data without clinical hazard thresholds.
 
-**What if a sensor fails?**
+## 5. What is live, and what happens if a service fails?
 
-The value remains missing and a data-quality observation is shown separately. The system does not infer physiology from a missing sample.
-
-**Is radiation an automatic safety alert?**
-
-No. We visualize only synthetic records and keep dose-rate and accumulated dose quantities separate. There are no limits or medical hazard categories in the MVP.
-
-**What persists?**
-
-The local backend persists demo telemetry/check-ins in SQLite. Demo mode check-ins are browser-local. Shared/public deployment is not claimed; production would require persistent hosting, authentication for writes, HTTPS, CORS, and security review.
-
-**What is next?**
-
-Have Ali and Ayoub review the statistical and scientific design, improve source-data provenance, test with domain experts, and design privacy/security controls before any real data use.
+The public Vercel deployment serves the frontend and deterministic synthetic Demo mode. FastAPI and SQLite run locally for the end-to-end demo; Live mode uses the backend only when configured. Live failures are visible and do not silently switch to mocks. A presenter can explicitly switch to Demo mode and disclose that change.

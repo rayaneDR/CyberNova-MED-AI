@@ -34,6 +34,17 @@ CyberNova demonstrates how transparent trends, provenance, quality context, and 
 
 All dashboard telemetry, radiation, and demo identities are synthetic. The analytics parameters are engineering demo settings pending review by the statistical and scientific owners. The OSDR item is catalog metadata only. No diagnosis, clinical alert threshold, treatment advice, real-time sensor, or NASA endorsement is present. No validated clinical hazard threshold is used.
 
+## AI use disclosure draft
+
+AI tools assisted with implementation, editing and presentation artwork. Team members reviewed and remain responsible for the project content. No AI output is used to diagnose, recommend treatment, or make claims about astronaut health. This wording is a draft for the official platform's disclosure field; use the platform's own field and required wording if it differs.
+
+## Presentation files
+
+- Final reviewed seven-slide deck: [CyberNova-MED-AI-pitch-final-3d-reviewed-v2.pptx](../submission/CyberNova-MED-AI-pitch-final-3d-reviewed-v2.pptx)
+- Matching PDF: [CyberNova-MED-AI-pitch-final-3d-reviewed-v2.pdf](../submission/CyberNova-MED-AI-pitch-final-3d-reviewed-v2.pdf)
+- Five-minute timed script: [PITCH_SCRIPT.md](PITCH_SCRIPT.md)
+- Jury Q&A: [PITCH_QA.md](PITCH_QA.md)
+
 ## Team
 
 Rayane (team lead, frontend, integration, backend); Khawla (original backend/API contribution); Ali (statistical analytics owner/reviewer); Amina (simulator); Ayoub (indicators and scientific research).
@@ -46,6 +57,6 @@ Rayane (team lead, frontend, integration, backend); Khawla (original backend/API
 - Challenge: https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/
 - NASA OSDR OSD-53: https://osdr.nasa.gov/bio/repo/data/studies/OSD-53
 
-## Suggested official submission checklist
+## Submission preparation and verification
 
-Attach the public repository link, one-minute demo recording or hosted demo (if available), this project description, and the team-authored pitch deck. Review the official [2026 challenge page](https://www.spaceappschallenge.org/2026/challenges/health-monitoring-software/) and [project submission guide](https://www.spaceappschallenge.org/resources/project-submission-guide/#navigating-the-hackathon-project-submission) for required fields and timing. The official 2026 event page listed the submission close as November 15 at 11:59 PM local time; the local pitch deadline of 12:30 Morocco time is organizer-provided and distinct. Confirm the portal's displayed deadline before upload.
+Prepared materials: project title and summary, challenge selection, public demo/repository links, NASA data and reference provenance, a seven-slide English deck, speaker script, and AI-use disclosure draft. The 2026 official overview says teams submit from the Project tab on their team page and lists the global close as November 15 at 11:59 PM local time. The current public submission guide was not retrievable during this review, and the signed-in team Project tab was not available in this workspace; exact field names, character limits, required attachments and AI-disclosure wording therefore remain to be confirmed in the portal. Do not treat this prepared checklist as a substitute for that verification. The local pitch deadline of 12:30 Morocco time is organizer-provided and distinct. Do not submit until the team lead reviews the final materials and confirms both deadlines.

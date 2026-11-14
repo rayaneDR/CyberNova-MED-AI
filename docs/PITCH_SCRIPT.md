@@ -1,41 +1,43 @@
-# Five-minute pitch script
+# CyberNova MED-AI — five-minute pitch
 
-Target: ~600 words at 120–125 wpm. Keep the live walkthrough to 65 seconds (section 5).
+**Total: 5:00.** The speaker notes are embedded in the seven-slide final deck. Keep the click-through rehearsal under each section's timebox. The telemetry, identities and scenario readings shown are synthetic.
 
-## 1. CyberNova MED-AI — 0:00–0:25
+## 1. CyberNova MED-AI — 0:00–0:20 (20 seconds)
 
-Hello, we are CyberNova X from Meknes. CyberNova MED-AI is a research-oriented mission-control demonstrator for reviewing astronaut health observations with their activity, data quality, and provenance. Every crew member and measurement in this demo is synthetic.
+Hello, we are CyberNova X from Meknes. CyberNova MED-AI is a transparent crew-health monitoring demonstrator for space missions. It puts readings, source quality and context in one place, while keeping people responsible for decisions. Dashboard telemetry and crew identities are synthetic. The space artwork in this presentation is generated and is not a NASA image.
 
-## 2. The problem — 0:25–0:55
+## 2. The challenge — 0:20–0:55 (35 seconds)
 
-Spaceflight health monitoring faces long-duration missions, changing activity, constrained sensors, and communication delays. A dashboard must make it clear when a channel stops reporting and when a valid series differs from its own history. Those are different events. Neither should be turned into an unsupported medical conclusion.
+The official challenge asks for software that gathers astronaut health indicators and helps astronauts evaluate their health. In space, a value needs its activity, time, source and quality beside it. A changing valid signal is different from a channel that stopped reporting. A statistical observation is also different from a medical conclusion. We make those distinctions visible and avoid diagnosis or treatment advice.
 
-## 3. Our solution — 0:55–1:35
+## 3. The solution — 0:55–1:40 (45 seconds)
 
-We built six connected screens: a mission overview, health trends, an observation center, a daily self-report, radiation tracking, and NASA research context. The frontend can run on deterministic demo fixtures or connect explicitly to a FastAPI service. Live errors stay visible; they do not silently replace backend data with demo values. Synthetic simulator packets are validated and persisted in SQLite.
+The dashboard has six connected views: overview, health trends, alerts, daily check-in, radiation tracking and NASA research. It displays heart rate, oxygen saturation and respiratory rate, plus sleep, fatigue on the proposed Samn–Perelli 1–7 scale, and hydration. It labels synthetic data and shows provenance. Demo mode works offline with deterministic fixtures. Live mode connects explicitly to FastAPI; a Live API error stays an error and never silently falls back to mock data.
 
-The experience is designed for human review. It shows heart rate, oxygen saturation, respiratory rate, sleep, subjective fatigue, and hydration intake with units and provenance.
+## 4. Technology pipeline — 1:40–2:30 (50 seconds)
 
-## 4. How it works — 1:35–2:20
+Amina's Python simulator sends synthetic packets. Rayane's FastAPI ingestion validates units and source fields, then stores accepted measurements and check-ins in SQLite. Ali's statistical module produces observations using rolling median and median absolute deviation with EWMA context and persistence rules. The Next.js frontend displays those returned records. Quality events remain separate from statistical observations, and missing measurements remain missing. The public Vercel site hosts the frontend only; the backend is a local demo service. This is an engineering prototype, not a clinical protocol.
 
-For eligible synthetic history, our current engineering demo computes astronaut-, metric-, and activity-specific baselines using a rolling median and median absolute deviation, then adds an exponentially weighted moving average. It requires a warm-up and sustained samples before creating a statistical observation. The page exposes method, context, and supporting values. Missing or invalid channels become data-quality observations, never physiological alerts.
+## 5. Working demo — 2:30–3:45 (75 seconds)
 
-The parameters are not medical thresholds or a validated protocol. They still require Ali's statistical review and Ayoub's scientific review before any stronger claim.
+Start on Overview: this crew and the latest readings are synthetic. Open Health and show the selected history range, activity context and a visible sensor gap. The chart does not invent a value for the gap. In Alerts, distinguish sensor quality from a statistical observation. Only show observations the service actually returns; if the baseline is still warming up, show that state instead of manufacturing an alert. Submit a daily check-in and point out that fatigue accepts one through seven. Open Radiation and show the labels: a source dose rate in mSv per day is not a completed 24-hour dose in mSv, and cumulative mission dose is tracked separately. Finish on Research and say what is NASA catalog context versus synthetic telemetry.
 
-## 5. Demonstration — 2:20–3:25
+## 6. NASA science and data — 3:45–4:40 (55 seconds)
 
-[Run the deterministic six-screen sequence in the demo runbook.]
+The app includes a small NASA OSDR OSD-53 catalog metadata snapshot for a whole-blood gene-expression study. The project represents thirteen catalog sample metadata records: six preflight, six postflight and one control-group record. These are metadata counts, not experimental results. We did not import gene-expression values or NASA heart-rate, oxygen-saturation or respiratory-rate measurements. NASA references inform the research context; the live dashboard data are synthetic. We cite the sources and make no NASA endorsement claim. No unverified radiation limit is used as an alert threshold.
 
-Here is the crew overview and last recorded sample. On the health screen, a gap remains visible. In alerts, a sensor issue is separate from a sustained statistical observation; if baseline warm-up is incomplete, we show that state. We submit a fatigue, sleep, and hydration check-in and confirm it is stored. Radiation is labeled synthetic; mSv per day stays a rate and is not presented as a completed daily dose. Finally, research context is separate from telemetry.
+## 7. Impact and next steps — 4:40–5:00 (20 seconds)
 
-## 6. Science and NASA data — 3:25–4:15
+Our contribution is a clear, testable workflow that preserves context and uncertainty. Next we need scientific review, appropriately governed source data, user evaluation and security work before any real health data use. CyberNova MED-AI is a hackathon prototype, not operational crew monitoring. Thank you.
 
-NASA's Open Science Data Repository catalog provides context through OSD-53, a whole-blood gene-expression study with preflight and postflight sample metadata. We display a small count summary from catalog metadata only. We did not process expression values, and this study does not provide the heart-rate or oxygen-saturation data in our interface. The dashboard's readings remain synthetic. We cite NASA sources as references and do not imply NASA endorsement.
+## Timing
 
-We also keep radiation quantities separate: a dose rate in mSv per day is not an accumulated daily dose in mSv. No unverified dose limit becomes an alert threshold.
-
-## 7. Impact and next steps — 4:15–5:00
-
-The value today is a transparent, testable integration pattern: preserve provenance, show missingness, separate sensor and statistical events, and leave decisions with people. Next, we need team review of analytical parameters, better validated and appropriately governed source data, security controls for any shared deployment, and user research with relevant domain experts.
-
-CyberNova MED-AI is a hackathon prototype—not a medical device and not operational crew monitoring. Thank you.
+| Slide | Duration | Cumulative |
+|---|---:|---:|
+| 1. Title | 20 s | 0:20 |
+| 2. Challenge | 35 s | 0:55 |
+| 3. Solution | 45 s | 1:40 |
+| 4. Pipeline | 50 s | 2:30 |
+| 5. Demo | 75 s | 3:45 |
+| 6. NASA data | 55 s | 4:40 |
+| 7. Impact | 20 s | 5:00 |

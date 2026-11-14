@@ -1,5 +1,16 @@
 # Verification and release status — November 14, 2026
 
+## Final presentation delivery recheck
+
+- From `frontend/`: `npm run lint`, `npm run typecheck`, and `npm run build` all passed. The production build compiled and generated the app routes.
+- From the repository root: `backend/.venv/Scripts/python.exe -m pytest analytics/tests backend/tests -q` — **51 passed**, with one upstream Starlette/AnyIO deprecation warning.
+- Public HTTP checks returned **200** for `/`, `/health`, `/alerts`, `/check-in`, `/radiation`, and `/research` on the Vercel demo URL.
+- A desktop browser opened the public overview in explicitly labeled Demo fixtures mode and showed fictional crew, synthetic vitals, and authored demo observations.
+- Tracked-file review found no tracked `.env` files or SQLite database files; a credential-pattern scan returned no matches. `.env.example` templates are tracked.
+- The new final reviewed deck has seven slides at 16:9; PPTX integrity and layout validation passed with zero findings. The matching PDF has seven pages. The original PPTX/PDF remain untouched. The deck is editable but static; no native PowerPoint animations were authored.
+- The public Vercel deployment is frontend-only; its Demo mode does not contact the local FastAPI/SQLite service.
+- No Space Apps submission was made. The current public 2026 Project Submission Guide did not load and the signed-in team Project tab was unavailable. Required field names, character limits, attachment constraints and AI disclosure wording still need confirmation in the official portal.
+
 ## Repository snapshot before this delivery commit
 
 - Local integration history: `feature/analytics-integration` at `7f826b07d034469fcbc8c734d39114aa82f359e6`.

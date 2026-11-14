@@ -1,4 +1,4 @@
-# 60–75 second deterministic demo runbook
+# 75-second deterministic demo runbook
 
 ## Before the pitch
 
@@ -7,14 +7,14 @@
 3. For live telemetry, use the registered simulator source-session UUID printed by `seed-demo`; point Amina's unchanged simulator at the local backend as documented in the backend README. Configure the frontend Live mode from `frontend/.env.local` (local only).
 4. Use a fresh local SQLite file for a fully repeatable baseline and avoid reusing a simulator source session after restarting its process. No reset endpoint is exposed. To reset synthetic-only local state, stop the server and remove only the explicitly configured local demo SQLite file, then run `init-db` and `seed-demo` again. Never use this on a shared or production database.
 
-## 65-second speaking and click sequence
+## 75-second speaking and click sequence
 
-- **0–10 s · Overview:** State that the session is fictional and synthetic. Point to astronaut selector, HR/SpO2/respiration, last sample, and source status.
-- **10–21 s · Health:** Show a trend range and a visible gap; say the chart preserves missingness and activity context rather than connecting across gaps.
-- **21–34 s · Alerts:** Show one sustained statistical observation (when seeded), then a sensor-quality issue. Explain different data paths and that neither is a diagnosis. If baseline warm-up has not completed, show “insufficient baseline” honestly instead.
-- **34–45 s · Check-in:** Submit fatigue 1–7, sleep hours, hydration mL, and optional note. Say it is a self-report saved to the local SQLite demo.
-- **45–55 s · Radiation:** Point out the synthetic source rate in mSv/day and distinguish it from accumulated mSv; show missing completed-dose period if applicable.
-- **55–65 s · Research:** Show OSDR OSD-53 metadata and clarify that no expression values or NASA biometric data are analyzed.
+- **0–12 s · Overview:** State that the session is fictional and synthetic. Point to astronaut selector, HR/SpO2/respiration, last sample, and source status.
+- **12–24 s · Health:** Show a trend range and a visible gap; say the chart preserves missingness and activity context rather than connecting across gaps.
+- **24–40 s · Alerts:** Show returned statistical observations if present, then a sensor-quality issue. Explain their different paths; neither is a diagnosis. If baseline warm-up has not completed, show that state honestly.
+- **40–53 s · Check-in:** Submit fatigue 1–7, sleep hours, hydration mL, and optional note. Say it is a self-report saved to the local SQLite demo.
+- **53–64 s · Radiation:** Point out the synthetic source rate in mSv/day and distinguish it from accumulated mSv; show a missing completed-dose period if applicable.
+- **64–75 s · Research:** Show OSDR OSD-53 metadata and clarify that no expression values or NASA biometric data are analyzed.
 
 ## Deterministic evidence and failure fallback
 
