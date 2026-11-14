@@ -17,3 +17,32 @@ export interface DashboardData {
   synthetic: true;
   samples: TelemetrySample[];
 }
+
+// Frontend-only mock extensions. These do not change the shared v0.1 API contract.
+export type Screen = "overview" | "health" | "alerts" | "check-in" | "radiation" | "research";
+export type DemoScenario = "nominal" | "empty" | "error";
+export interface Astronaut { id: string; name: string; initials: string; role: string; }
+export interface HistoricalSample extends TelemetrySample {
+  activity: "Rest" | "Exercise" | "Lab work";
+  quality: "Complete" | "Signal gap";
+}
+export interface Observation {
+  id: string;
+  title: string;
+  category: "Statistical deviation" | "Sensor failure";
+  timestamp: string;
+  explanation: string;
+  context: string;
+  resolved: boolean;
+}
+export interface RadiationSample { day: string; dailyMicroSv: number; cumulativeMilliSv: number; }
+export interface WorkspaceData {
+  source: "mock";
+  synthetic: true;
+  astronaut: Astronaut;
+  samples: HistoricalSample[];
+  observations: Observation[];
+  radiation: RadiationSample[];
+}
+export interface CheckInInput { sleepHours: number; fatigueScore: number; hydrationMl: number; notes: string; }
+export interface CheckInRecord extends CheckInInput { id: string; subjectId: string; submittedAt: string; source: "mock"; }

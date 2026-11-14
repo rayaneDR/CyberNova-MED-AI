@@ -1,5 +1,11 @@
 # Architecture
 
+## Frontend MVP update
+
+The six-screen frontend is documented in [frontend-mvp.md](frontend-mvp.md). The initial slice below is historical context. The current App Router root layout hosts a persistent client mission provider and shell; the server pages select the appropriate screen. The provider fetches typed synthetic workspace responses through the existing data-source adapter with cancellation. New frontend-only response types extend rather than alter shared telemetry v0.1. No teammate module or shared contract changed.
+
+The new visual system uses dark navy surfaces with cyan accents. Daily check-ins use the same mock adapter boundary and browser-local storage. Radiation and observation payloads are frontend proposals, not backend API commitments or implemented analytics.
+
 ## Initial slice
 
 The Next.js App Router server page calls `getDashboardData()` in `frontend/src/lib/data-source.ts`. That function returns a fresh copy of deterministic synthetic fixtures. The page renders six indicators and sends serializable samples to a small client component for Recharts and metric selection. The rest of the page stays server rendered. Tailwind CSS v4 is configured through PostCSS; domain-specific CSS supplies the layout and visual tokens.
