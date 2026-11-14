@@ -1,5 +1,9 @@
 # Initialization and verification — November 14, 2026
 
+## Publication follow-up
+
+After the initial local-only setup, the connected GitHub integration was confirmed as `rayaneDR`. Composio's authenticated repository lookup returned 404; its repository creation tool then returned `private: false`, `default_branch: main`, and canonical URL https://github.com/rayaneDR/CyberNova-MED-AI. The local commands `git remote add origin https://github.com/rayaneDR/CyberNova-MED-AI.git` and `git push -u origin main` succeeded, publishing initial commit `7966714`. A documentation follow-up records publication status. The original inspection notes below describe the earlier local-only state, not the current publication status.
+
 ## Workspace and GitHub status
 
 Inspected the starting workspace with `Get-Location`, `Get-ChildItem -Force`, and `rg --files --hidden -g '!node_modules' -g '!.git' .`. It contained only empty `outputs/` and `work/` directories. No existing project files were overwritten. No applicable parent AGENTS.md was found. Deliverable repository: `outputs/CyberNova-MED-AI/` under the original workspace.

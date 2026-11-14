@@ -53,7 +53,7 @@ Run these from `frontend/`. `typecheck` generates Next.js route types first, so 
 
 See [CONTRIBUTING.md](CONTRIBUTING.md), [architecture](docs/architecture.md), and [draft API contracts](docs/api-contracts-draft.md). Research starting points are in [research/README.md](research/README.md). No NASA data is bundled; all fixture values are invented.
 
-GitHub publication was not performed during initialization because GitHub CLI was unavailable. See [publication steps](docs/github-setup.md); this README does not assert that a remote exists.
+Public repository: [rayaneDR/CyberNova-MED-AI](https://github.com/rayaneDR/CyberNova-MED-AI). Created through the connected GitHub account and pushed from the local repository on November 14, 2026. The default branch is `main`; the actual Git remote is `https://github.com/rayaneDR/CyberNova-MED-AI.git`.
 
 MIT licensed. Local initialization and validation results are recorded in `docs/verification.md`.
 

@@ -1,4 +1,16 @@
-# Publish to GitHub after authentication
+# GitHub publication and CLI reference
+
+## Published November 14, 2026
+
+The connected GitHub integration authenticated as `rayaneDR`. An authenticated repository lookup returned 404, then Composio created `rayaneDR/CyberNova-MED-AI` with public visibility and no server-generated starter commit. Local Git credentials successfully pushed the existing initial commit to `main` with `git push -u origin main`.
+
+Verified repository URL: https://github.com/rayaneDR/CyberNova-MED-AI
+
+Actual origin: `https://github.com/rayaneDR/CyberNova-MED-AI.git`.
+
+The instructions below record the earlier CLI limitation and remain useful for optional CLI setup. Repository creation is already complete; do not run the creation command again.
+
+## Earlier inspection and optional CLI setup
 
 Initial inspection: `gh auth status` could not run because `gh` was not on PATH, and common GitHub CLI installation paths were absent. No GitHub remote was created, no existing remote repository was inspected, and no push was attempted. The local repository uses `main`.
 
