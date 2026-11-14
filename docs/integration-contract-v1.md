@@ -87,7 +87,7 @@ Common list: `{"items":[<typed objects>],"next_cursor":null,"synthetic":true}`. 
 
 | Endpoint | Exact request/response design | MVP priority |
 | --- | --- | --- |
-| `GET /health` | No body/query. 200 `{status:"ok",contract_version:"1.0.0",storage:"ready",analytics:"not_configured",synthetic_only:true}`. 503 `{status:"unavailable",contract_version:"1.0.0",storage:"unavailable",analytics:"not_configured",synthetic_only:true}` | Required readiness |
+| `GET /health` | No body/query. 200 `{status:"ok",contract_version:"1.0.0",storage:"ready",analytics:"ready",synthetic_only:true}`. 503 `{status:"unavailable",contract_version:"1.0.0",storage:"unavailable",analytics:"ready",synthetic_only:true}` | Required readiness |
 | `GET /astronauts` | Mission UUID + pagination; common list of Astronaut | Required |
 | `POST /measurements` | `source_session_id`, required `input_format=canonical_v1|ayoub_raw_v1`; body MeasurementInput or unchanged Ayoub raw JSON. Format must match registered session. Canonical requires Idempotency-Key. 201/200 receipt below. Raw import can atomically add source check-in/radiation snapshots too | Required canonical writes; Ayoub import required compatibility |
 | `GET /measurements` | Common filters/list of exact Measurement objects; top-level `sensor_health:SensorHealth[]` contains health records linked to this page's measurement IDs. It is an envelope extension, never an extra field inside a strict Measurement object | Required |
@@ -97,7 +97,7 @@ Common list: `{"items":[<typed objects>],"next_cursor":null,"synthetic":true}`. 
 | `POST /radiation` | `source_session_id` + Idempotency-Key; RadiationInput. Returns 201 `{item:RadiationReading,duplicate:false}`, replay 200 same item/duplicate true. Source-only vs completed-dose classification is validated | Optional manual/import path; ingestion already stores radiation |
 | `GET /radiation` | Common list of RadiationReading; default canonical daily/cumulative only; explicit quantity filter needed for source-only values. Unknown-period/source-only values never fill completed-day charts | Required |
 | `GET /analytics/summary` | Required astronaut/mission and optional from/to. 200 summary below; no invented median/MAD/EWMA results | Required honest frontend availability contract; statistical results optional pending Ali |
-| `GET /alerts` | Common filters/list of AlertEnvelope below; returns analytics_status:not_configured until Ali integration. Sensor data issues can appear independently | Required history/status surface |
+| `GET /alerts` | Common filters/list of AlertEnvelope below; returns analytics and baseline status. Sensor data issues can appear independently from sustained statistical observations | Required history/status surface |
 | `PATCH /alerts/{alert_id}/acknowledge` | UUID path, body AcknowledgeInput `{acknowledged:true,note:string≤500}`. Server derives actor/time. 200 `{item:AlertEnvelope}`; repeat by same actor is idempotent and keeps first ack time. 404 unknown, 409 incompatible state | Optional for first ingestion demo; required before claiming persistent review |
 
 Simulator request shape checks: root project string, simulator object with `mode` normal/anomaly/failure (auto outputs chosen mode), nullable scenario string (authoring metadata only), finite ramp 0–1, positive sequence fitting signed SQLite int64, aware sent_at. Require nested ingestion context with nonempty payload/astronaut IDs, positive mission_day, aware timestamp; telemetry/radiation objects; optional snapshot fields may be absent/null. Required telemetry channel nodes need unit strings; their values can be null; alias/value disagreement is a channel issue. Preserve unrecognized source fields in raw JSON; do not treat them as new canonical metrics or execute rules. This is a version-pinned adapter for the supplied unversioned packet format.
@@ -114,7 +114,7 @@ Full canonical write/read examples for every model are in `contracts/examples-v1
 GET /health
 ```
 ```json
-{"status":"ok","contract_version":"1.0.0","storage":"ready","analytics":"not_configured","synthetic_only":true}
+{"status":"ok","contract_version":"1.0.0","storage":"ready","analytics":"ready","synthetic_only":true}
 ```
 ```http
 GET /astronauts?mission_id=11111111-1111-4111-8111-111111111111
@@ -125,7 +125,7 @@ GET /alerts?mission_id=11111111-1111-4111-8111-111111111111&astronaut_id=2222222
 ```
 Each list uses the common envelope; object items are instances of the named schema. For unavailable statistical observations:
 ```json
-{"items":[],"next_cursor":null,"synthetic":true,"analytics_status":"not_configured"}
+{"items":[],"next_cursor":null,"synthetic":true,"analytics_status":"ready","baseline_status":"insufficient_baseline"}
 ```
 No-observation is not equivalent to a “healthy” astronaut.
 
@@ -145,9 +145,9 @@ Canonical measurement write: POST `/measurements?input_format=canonical_v1&sourc
 GET /analytics/summary?mission_id=11111111-1111-4111-8111-111111111111&astronaut_id=22222222-2222-4222-8222-222222222222
 ```
 ```json
-{"astronaut_id":"22222222-2222-4222-8222-222222222222","mission_id":"11111111-1111-4111-8111-111111111111","analytics_status":"not_configured","baseline_status":"unavailable","statistical_observations_count":null,"latest_measurement_at":null,"summary":null,"synthetic":true}
+{"astronaut_id":"22222222-2222-4222-8222-222222222222","mission_id":"11111111-1111-4111-8111-111111111111","analytics_status":"ready","baseline_status":"insufficient_baseline","statistical_observations_count":0,"latest_measurement_at":null,"algorithm_version":"personal-baseline-mad-ewma-v1","configuration":{"history_window":30,"minimum_baseline":8,"robust_z_threshold":3.5,"baseline_guard_z":2.5,"ewma_alpha":0.25,"ewma_z_threshold":3.0,"required_consecutive":3,"dispersion_floors":{"heart_rate_bpm":1.0,"spo2_percent":0.1,"respiratory_rate_per_min":1.0}},"metrics":[],"synthetic":true}
 ```
-`latest_measurement_at` may contain the actual stored latest event timestamp; it remains null for no data. A configured Ali module may return `analytics_status:ready|insufficient_data|error`, baseline status `ready|insufficient_data|unavailable`, count only when computed, and versioned `summary` under Ali's agreed schema. That schema is deliberately not invented here. An available module reporting insufficient baseline is not not_configured, nor a nominal result.
+`latest_measurement_at` may contain the actual stored latest event timestamp; it remains null for no data. The current Rayane-owned integration calls the isolated, credited analytics implementation described in `../docs/analytics-integration.md`. The response includes explicit per-metric/activity baseline counts and configuration; insufficient baseline is not a nominal result. Parameters are for a synthetic engineering demonstration and do not activate health thresholds.
 
 ```http
 PATCH /alerts/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/acknowledge

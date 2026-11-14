@@ -62,6 +62,19 @@ class SensorHealthRow(Base):
     measurement_id: Mapped[str] = mapped_column(ForeignKey("resources.id"), nullable=False)
     payload_json: Mapped[str] = mapped_column(Text, nullable=False)
 
+class StatisticalObservationRow(Base):
+    __tablename__ = "statistical_observations"
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    mission_id: Mapped[str] = mapped_column(ForeignKey("missions.id"), nullable=False, index=True)
+    astronaut_id: Mapped[str] = mapped_column(ForeignKey("astronauts.id"), nullable=False, index=True)
+    detected_at: Mapped[str] = mapped_column(String(40), nullable=False, index=True)
+    metric: Mapped[str] = mapped_column(String(40), nullable=False)
+    activity_context: Mapped[str] = mapped_column(String(20), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    payload_json: Mapped[str] = mapped_column(Text, nullable=False)
+
+Index("ix_statistical_observations_scope", StatisticalObservationRow.mission_id, StatisticalObservationRow.astronaut_id, StatisticalObservationRow.detected_at)
+
 class AckRow(Base):
     __tablename__ = "alert_acknowledgments"
     alert_id: Mapped[str] = mapped_column(String(36), primary_key=True)

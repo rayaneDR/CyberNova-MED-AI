@@ -47,7 +47,8 @@ class AlertEnvelope(ResponseModel):
     acknowledgment:AlertAcknowledgment|None
 
 class AlertsList(ListResponse[AlertEnvelope]):
-    analytics_status:Literal["not_configured"]
+    analytics_status:Literal["ready"]
+    baseline_status:Literal["ready","insufficient_baseline"]
 
 class Receipt(ResponseModel):
     ingest_id:str
@@ -69,15 +70,37 @@ class HealthResponse(ResponseModel):
     status:Literal["ok","unavailable"]
     contract_version:Literal["1.0.0"]
     storage:Literal["ready","unavailable"]
-    analytics:Literal["not_configured"]
+    analytics:Literal["ready"]
     synthetic_only:Literal[True]
+
+class MetricBaselineSummary(ResponseModel):
+    astronaut_id:str
+    metric:Literal["heart_rate_bpm","spo2_percent","respiratory_rate_per_min"]
+    activity_context:Literal["RESTING","SLEEP","EXERCISE","EVA_PREP","EVA_ACTIVE","LAB_WORK","UNKNOWN"]
+    status:Literal["READY","INSUFFICIENT_BASELINE"]
+    valid_measurement_count:int
+    baseline_sample_count:int
+    baseline_median:float|None
+    mad:float|None
+
+class AnalyticsConfiguration(ResponseModel):
+    history_window:int
+    minimum_baseline:int
+    robust_z_threshold:float
+    baseline_guard_z:float
+    ewma_alpha:float
+    ewma_z_threshold:float
+    required_consecutive:int
+    dispersion_floors:dict[str,float]
 
 class AnalyticsSummary(ResponseModel):
     astronaut_id:str
     mission_id:str
-    analytics_status:Literal["not_configured"]
-    baseline_status:Literal["unavailable"]
-    statistical_observations_count:int|None
+    analytics_status:Literal["ready"]
+    baseline_status:Literal["ready","insufficient_baseline"]
+    statistical_observations_count:int
     latest_measurement_at:str|None
-    summary:None
+    algorithm_version:str
+    configuration:AnalyticsConfiguration
+    metrics:list[MetricBaselineSummary]
     synthetic:Literal[True]

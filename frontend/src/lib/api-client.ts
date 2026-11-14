@@ -1,4 +1,4 @@
-import type { Astronaut, CheckInInput, CheckInRecord, HistoricalSample, Observation, RadiationReadingView, WorkspaceData } from "./contracts";
+import type { AnalyticsConfiguration, Astronaut, CheckInInput, CheckInRecord, HistoricalSample, MetricBaselineSummary, Observation, RadiationReadingView, WorkspaceData } from "./contracts";
 
 export type ApiReading = { value: number | null; unit: string; quality: "unverified" | "missing" | "invalid" | "conflict"; source_paths: string[] };
 export type ApiProvenance = { source_format: string; source_session_id: string; source_record_id: string; source_sent_at: string | null; received_at: string; ingest_id: string; payload_sha256: string };
@@ -24,14 +24,25 @@ export type ApiRadiation = {
   quantity: RadiationReadingView["quantity"]; value: number | null; unit: "mSv" | "mSv/day"; quality: string;
   dose_basis: string; integration_window: { start: string; end: string } | null; method: string; source_paths: string[]; provenance: ApiProvenance;
 };
+export type ApiStatisticalObservation = {
+  id:string; astronaut_id:string; mission_id:string; measurement_ids:string[]; detected_at:string; activity_context:string;
+  metric:"heart_rate_bpm"|"spo2_percent"|"respiratory_rate_per_min"; method:"median_mad"|"ewma";
+  observation_type:"robust_deviation"|"sustained_ewma_shift"|"combined_deviation"; status:"STATISTICAL_DEVIATION";
+  algorithm_version:string; baseline_id:string; score:number; source:string; quality:"unverified";
+  supporting_values:Record<string,number>; explanation:string; synthetic:true;
+};
 export type ApiAlert = {
   id: string; astronaut_id: string; mission_id: string; detected_at: string; kind: "sensor_data_issue" | "statistical_observation"; synthetic: true;
-  sensor_health: ApiSensorHealth | null; statistical_observation: { metric: string; method: string; explanation: string; score: number; algorithm_version: string } | null;
+  sensor_health: ApiSensorHealth | null; statistical_observation: ApiStatisticalObservation | null;
   acknowledgment: { actor_id: string; acknowledged_at: string; note: string } | null;
 };
 export type ApiList<T> = { items: T[]; next_cursor: string | null; synthetic: true };
 type MeasurementList = ApiList<ApiMeasurement> & { sensor_health: ApiSensorHealth[] };
-type AnalyticsSummary = { astronaut_id: string; mission_id: string; analytics_status: "not_configured"; baseline_status: "unavailable"; statistical_observations_count: null; latest_measurement_at: string | null; summary: null; synthetic: true };
+type AnalyticsSummary = {
+  astronaut_id:string; mission_id:string; analytics_status:"ready"; baseline_status:"ready"|"insufficient_baseline";
+  statistical_observations_count:number; latest_measurement_at:string|null; algorithm_version:string;
+  configuration:AnalyticsConfiguration; metrics:MetricBaselineSummary[]; synthetic:true;
+};
 type CheckInPost = { item: ApiCheckIn; duplicate: boolean };
 
 export const backendConfig = {
@@ -123,9 +134,11 @@ function observationFromApi(alert: ApiAlert): Observation {
   const health = alert.sensor_health, statistical = alert.statistical_observation;
   const channelName = health?.channel.replaceAll("_", " ") ?? statistical?.metric ?? "Observation";
   return { id: alert.id, title: health ? `${channelName} · ${health.issue_codes.join(", ") || health.quality}` : `${statistical?.metric ?? "Statistical"} observation`,
-    category: alert.kind === "sensor_data_issue" ? "Sensor failure" : "Statistical deviation", timestamp: alert.detected_at,
+    category: alert.kind === "sensor_data_issue" ? "Sensor data issue" : "Statistical deviation", timestamp: alert.detected_at,
     explanation: health ? `Source reported ${health.quality} data. This is a data-quality observation, not a physiological conclusion.` : statistical?.explanation ?? "Statistical observation supplied by the analytics service.",
-    context: health ? `Connectivity: ${health.connectivity}. Source status: ${health.source_reported_status ?? "not reported"}.` : `Method ${statistical?.method ?? "not supplied"}; version ${statistical?.algorithm_version ?? "not supplied"}.`, resolved: alert.acknowledgment !== null, source: "api",
+    context: health ? `Connectivity: ${health.connectivity}. Source status: ${health.source_reported_status ?? "not reported"}.` : `Method ${statistical?.method ?? "not supplied"}; ${statistical?.observation_type ?? "statistical observation"}; activity ${statistical?.activity_context ?? "unknown"}; score ${statistical?.score ?? "unavailable"}; version ${statistical?.algorithm_version ?? "not supplied"}.`, resolved: alert.acknowledgment !== null, source: "api",
+    metric:statistical?.metric, method:statistical?.method, observationType:statistical?.observation_type, status:health ? "SENSOR_DATA_ISSUE" : statistical?.status,
+    quality:health?.quality ?? statistical?.quality, sourceFormat:statistical?.source, activityContext:statistical?.activity_context, supportingValues:statistical?.supporting_values,
     acknowledgment: alert.acknowledgment ? { actorId: alert.acknowledgment.actor_id, acknowledgedAt: alert.acknowledgment.acknowledged_at, note: alert.acknowledgment.note } : null };
 }
 
@@ -157,7 +170,8 @@ export async function getLiveWorkspace(astronaut: Astronaut, signal?: AbortSigna
   return { source: "api", synthetic: true, missionId, astronaut, samples, observations: alerts.map(observationFromApi).sort((a, b) => b.timestamp.localeCompare(a.timestamp)),
     radiation: radiationChart, radiationReadings, sourceRates: sourceRateViews,
     sensorHealth: measurementResult.health.map((sensor) => ({ channel: sensor.channel, quality: sensor.quality, connectivity: sensor.connectivity, issueCodes: sensor.issue_codes, sourceStatus: sensor.source_reported_status, lastSampleAt: sensor.last_source_sample_at })),
-    checkIns: checkins.map(checkInView).filter((item): item is CheckInRecord => item !== null), analyticsStatus: analytics.analytics_status };
+    checkIns: checkins.map(checkInView).filter((item): item is CheckInRecord => item !== null), analyticsStatus: analytics.analytics_status,
+    baselineStatus:analytics.baseline_status, analyticsMetrics:analytics.metrics, analyticsConfiguration:analytics.configuration };
 }
 
 export async function getLiveCheckIns(missionId: string, astronautId: string, signal?: AbortSignal): Promise<CheckInRecord[]> {

@@ -1,4 +1,4 @@
-import json, os, uuid, hashlib
+import json, os, uuid, hashlib, logging
 import base64
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
@@ -13,12 +13,15 @@ from sqlalchemy.orm import Session
 from .db import get_db, initialize_database
 from . import models
 from .service import dump, iso, parse, session_for, persist_ingest, utcnow
+from .analytics_adapter import materialize_analytics
 from .docs_contract_import import *  # noqa: F403
 from .response_models import (  # noqa: E402
     AlertEnvelope, AlertsList, AnalyticsSummary, AstronautList, CheckIn,
     CheckInList, HealthResponse, ItemOnly, ItemResponse, MeasurementList, RadiationList,
     RadiationReading, Receipt,
 )
+
+logger=logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(_app):
@@ -55,8 +58,8 @@ def response_model(model, data):
 
 @app.get("/health",response_model=HealthResponse)
 def health(db:Session=Depends(get_db)):
-    try: db.execute(select(1)); return {"status":"ok","contract_version":"1.0.0","storage":"ready","analytics":"not_configured","synthetic_only":True}
-    except Exception: raise HTTPException(503,{"status":"unavailable","contract_version":"1.0.0","storage":"unavailable","analytics":"not_configured","synthetic_only":True})
+    try: db.execute(select(1)); return {"status":"ok","contract_version":"1.0.0","storage":"ready","analytics":"ready","synthetic_only":True}
+    except Exception: raise HTTPException(503,{"status":"unavailable","contract_version":"1.0.0","storage":"unavailable","analytics":"ready","synthetic_only":True})
 
 @app.get("/astronauts",response_model=AstronautList)
 def astronauts(mission_id:uuid.UUID,db:Session=Depends(get_db)):
@@ -130,7 +133,14 @@ def canonical_write(db,source_session_id,fmt,model,data,key,authorization):
     ingest=models.IngestRow(id=iid,source_session_id=s.id,source_record_id=key,payload_sha256=sha,raw_body=raw,receipt_json=dump(receipt),received_at=now); db.add(ingest)
     kind="measurement" if receipt["measurement_ids"] else "checkin" if receipt["checkin_ids"] else "radiation"
     db.add(models.ResourceRow(id=rid,kind=kind,mission_id=astro.mission_id,astronaut_id=astro.id,event_at=iso(event),ingest_id=iid,payload_json=dump(item)))
-    try: db.commit()
+    try:
+        if kind == "measurement":
+            for channel in ("heart_rate_bpm", "spo2_percent", "respiratory_rate_per_min"):
+                reading=item[channel]
+                issue_code={"missing":"VALUE_MISSING","invalid":"INVALID_VALUE","conflict":"ALIAS_CONFLICT"}.get(reading["quality"])
+                health_item={"id":str(uuid.uuid4()),"measurement_id":rid,"channel":channel,"source_reported_status":None,"hardware_model_claim":None,"quality":reading["quality"],"issue_codes":[issue_code] if issue_code else [],"connectivity":"unknown","last_source_sample_at":iso(item["observed_at"]),"last_non_null_sample_at":iso(item["observed_at"]) if reading["value"] is not None else None,"synthetic":True}
+                db.add(models.SensorHealthRow(id=health_item["id"],measurement_id=rid,payload_json=dump(health_item)))
+        db.commit()
     except SQLAlchemyError as e:
         db.rollback(); raise err(e)
     return {"item":item,"duplicate":False} if kind!="measurement" else receipt,False
@@ -195,30 +205,47 @@ def radiation(mission_id:uuid.UUID,astronaut_id:uuid.UUID,quantity:str|None=None
 
 @app.get("/analytics/summary",response_model=AnalyticsSummary)
 def analytics_summary(mission_id:uuid.UUID,astronaut_id:uuid.UUID,db:Session=Depends(get_db)):
-    latest=db.scalar(select(models.ResourceRow.event_at).where(models.ResourceRow.kind=="measurement",models.ResourceRow.mission_id==str(mission_id),models.ResourceRow.astronaut_id==str(astronaut_id)).order_by(models.ResourceRow.event_at.desc()).limit(1))
-    return response_model(AnalyticsSummary,{"astronaut_id":str(astronaut_id),"mission_id":str(mission_id),"analytics_status":"not_configured","baseline_status":"unavailable","statistical_observations_count":None,"latest_measurement_at":latest,"summary":None,"synthetic":True})
+    try:
+        result=materialize_analytics(db,str(mission_id),str(astronaut_id))
+        return response_model(AnalyticsSummary,{"mission_id":str(mission_id),**result})
+    except Exception as e:
+        db.rollback(); logger.exception("Analytics summary failed for mission=%s astronaut=%s",mission_id,astronaut_id)
+        if isinstance(e,SQLAlchemyError): raise HTTPException(503,detail={"error":{"code":"ANALYTICS_STORAGE_UNAVAILABLE","message":"Analytics persistence is temporarily unavailable"}})
+        raise HTTPException(503,detail={"error":{"code":"ANALYTICS_UNAVAILABLE","message":"Analytics processing failed; no result was fabricated"}})
 
-@app.get("/alerts",response_model=AlertsList)
-def alerts(mission_id:uuid.UUID,astronaut_id:uuid.UUID,kind:str|None=None,acknowledged:bool|None=None,db:Session=Depends(get_db)):
-    rows=db.scalars(select(models.ResourceRow).where(models.ResourceRow.kind=="measurement",models.ResourceRow.mission_id==str(mission_id),models.ResourceRow.astronaut_id==str(astronaut_id))).all(); items=[]
+def _alert_items(db:Session,mission_id:str,astronaut_id:str):
+    rows=db.scalars(select(models.ResourceRow).where(models.ResourceRow.kind=="measurement",models.ResourceRow.mission_id==mission_id,models.ResourceRow.astronaut_id==astronaut_id)).all(); items=[]
     for row in rows:
         for hrow in db.scalars(select(models.SensorHealthRow).where(models.SensorHealthRow.measurement_id==row.id)).all():
             h=json.loads(hrow.payload_json)
             if not h["issue_codes"] or h["quality"]=="unverified": continue
             alert_id=str(uuid.uuid5(uuid.NAMESPACE_URL,f"{row.id}:{h['channel']}:{h['issue_codes'][0]}")); ack=db.get(models.AckRow,alert_id)
-            item={"id":alert_id,"astronaut_id":row.astronaut_id,"mission_id":row.mission_id,"detected_at":row.event_at,"kind":"sensor_data_issue","synthetic":True,"sensor_health":h,"statistical_observation":None,"acknowledgment":{"actor_id":ack.actor_id,"acknowledged_at":ack.acknowledged_at,"note":ack.note} if ack else None}
-            if kind and kind!="sensor_data_issue": continue
-            if acknowledged is not None and (ack is not None)!=acknowledged: continue
-            items.append(item)
-    items.sort(key=lambda x:(x["detected_at"],x["id"]))
-    return response_model(AlertsList,{"items":items,"next_cursor":None,"synthetic":True,"analytics_status":"not_configured"})
+            items.append({"id":alert_id,"astronaut_id":row.astronaut_id,"mission_id":row.mission_id,"detected_at":row.event_at,"kind":"sensor_data_issue","synthetic":True,"sensor_health":h,"statistical_observation":None,"acknowledgment":{"actor_id":ack.actor_id,"acknowledged_at":ack.acknowledged_at,"note":ack.note} if ack else None})
+    stat_rows=db.scalars(select(models.StatisticalObservationRow).where(models.StatisticalObservationRow.mission_id==mission_id,models.StatisticalObservationRow.astronaut_id==astronaut_id,models.StatisticalObservationRow.is_active.is_(True))).all()
+    for row in stat_rows:
+        ack=db.get(models.AckRow,row.id)
+        items.append({"id":row.id,"astronaut_id":astronaut_id,"mission_id":mission_id,"detected_at":row.detected_at,"kind":"statistical_observation","synthetic":True,"sensor_health":None,"statistical_observation":json.loads(row.payload_json),"acknowledgment":{"actor_id":ack.actor_id,"acknowledged_at":ack.acknowledged_at,"note":ack.note} if ack else None})
+    return sorted(items,key=lambda item:(item["detected_at"],item["id"]))
+
+@app.get("/alerts",response_model=AlertsList)
+def alerts(mission_id:uuid.UUID,astronaut_id:uuid.UUID,kind:str|None=None,acknowledged:bool|None=None,db:Session=Depends(get_db)):
+    try:
+        analytics=materialize_analytics(db,str(mission_id),str(astronaut_id))
+        items=_alert_items(db,str(mission_id),str(astronaut_id))
+        if kind: items=[item for item in items if item["kind"]==kind]
+        if acknowledged is not None: items=[item for item in items if (item["acknowledgment"] is not None)==acknowledged]
+        return response_model(AlertsList,{"items":items,"next_cursor":None,"synthetic":True,"analytics_status":"ready","baseline_status":analytics["baseline_status"]})
+    except Exception as e:
+        db.rollback(); logger.exception("Alert listing failed for mission=%s astronaut=%s",mission_id,astronaut_id)
+        if isinstance(e,SQLAlchemyError): raise HTTPException(503,detail={"error":{"code":"ANALYTICS_STORAGE_UNAVAILABLE","message":"Analytics persistence is temporarily unavailable"}})
+        raise HTTPException(503,detail={"error":{"code":"ANALYTICS_UNAVAILABLE","message":"Analytics processing failed; no result was fabricated"}})
 
 @app.patch("/alerts/{alert_id}/acknowledge",response_model=ItemOnly[AlertEnvelope])
 def acknowledge(alert_id:uuid.UUID,data:AcknowledgeInput,authorization:str|None=Header(None),db:Session=Depends(get_db)):
     auth_write(authorization)
     # Only an alert deterministically derived from a stored sensor issue can be acknowledged.
     candidates=alerts_for_ack(db)
-    item=next((x.model_dump(mode="json") for x in candidates if x.id==str(alert_id)),None)
+    item=next((x for x in candidates if x["id"]==str(alert_id)),None)
     if not item: raise HTTPException(404,"Alert not found")
     ack=db.get(models.AckRow,str(alert_id))
     if not ack:
@@ -228,5 +255,7 @@ def acknowledge(alert_id:uuid.UUID,data:AcknowledgeInput,authorization:str|None=
 
 def alerts_for_ack(db):
     result=[]
-    for a in db.scalars(select(models.AstronautRow)).all(): result.extend(alerts(a.mission_id,a.id,None,None,db).items)
+    for astronaut in db.scalars(select(models.AstronautRow)).all():
+        materialize_analytics(db,astronaut.mission_id,astronaut.id)
+        result.extend(_alert_items(db,astronaut.mission_id,astronaut.id))
     return result

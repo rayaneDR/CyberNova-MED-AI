@@ -33,13 +33,21 @@ export interface HistoricalSample extends TelemetrySample {
 export interface Observation {
   id: string;
   title: string;
-  category: "Statistical deviation" | "Sensor failure";
+  category: "Statistical deviation" | "Sensor failure" | "Sensor data issue";
   timestamp: string;
   explanation: string;
   context: string;
   resolved: boolean;
   source?: "mock" | "api";
   acknowledgment?: { actorId: string; acknowledgedAt: string; note: string } | null;
+  metric?: string;
+  method?: "median_mad" | "ewma";
+  observationType?: "robust_deviation" | "sustained_ewma_shift" | "combined_deviation";
+  status?: "STATISTICAL_DEVIATION" | "SENSOR_DATA_ISSUE";
+  quality?: string;
+  sourceFormat?: string;
+  activityContext?: string;
+  supportingValues?: Record<string, number>;
 }
 export interface RadiationSample { day: string; dailyMicroSv: number | null; cumulativeMilliSv: number | null; dailyDoseMsv?: number | null; sourceDoseRateMsvDay?: number | null; }
 export interface SensorQuality { channel: string; quality: string; connectivity: string; issueCodes: string[]; sourceStatus?: string | null; lastSampleAt?: string; }
@@ -59,7 +67,19 @@ export interface WorkspaceData {
   sourceRates?: RadiationReadingView[];
   sensorHealth?: SensorQuality[];
   checkIns?: CheckInRecord[];
-  analyticsStatus?: "not_configured";
+  analyticsStatus?: "ready";
+  baselineStatus?: "ready" | "insufficient_baseline";
+  analyticsMetrics?: MetricBaselineSummary[];
+  analyticsConfiguration?: AnalyticsConfiguration;
+}
+export interface MetricBaselineSummary {
+  astronaut_id: string; metric: string; activity_context: string; status: "READY" | "INSUFFICIENT_BASELINE";
+  valid_measurement_count: number; baseline_sample_count: number; baseline_median: number | null; mad: number | null;
+}
+export interface AnalyticsConfiguration {
+  history_window: number; minimum_baseline: number; robust_z_threshold: number; baseline_guard_z: number;
+  ewma_alpha: number; ewma_z_threshold: number; required_consecutive: number;
+  dispersion_floors: Record<string, number>;
 }
 export interface CheckInInput { sleepHours: number; fatigueScore: number; fatigueScale: "samn_perelli_1_7"; hydrationMl: number; notes: string; }
 export type CheckInRecord = Omit<CheckInInput, "fatigueScale"> & { fatigueScale: "samn_perelli_1_7" | "legacy_demo_1_10"; id: string; subjectId: string; submittedAt: string; source: "mock" | "api"; };

@@ -221,10 +221,15 @@
       "activity_context": "RESTING",
       "metric": "heart_rate_bpm",
       "method": "median_mad",
-      "algorithm_version": "DESIGN-ONLY-NOT-IMPLEMENTED",
+      "observation_type": "robust_deviation",
+      "status": "STATISTICAL_DEVIATION",
+      "algorithm_version": "personal-baseline-mad-ewma-v1",
       "baseline_id": "00000010-1111-4111-8111-111111111111",
       "score": 0.0,
-      "explanation": "Schema example only; Ali has not produced an observation or baseline.",
+      "source": "amina_simulator_v1",
+      "quality": "unverified",
+      "supporting_values": {"baseline_sample_count": 8, "baseline_median": 70, "mad": 1, "robust_score": 4.0, "ewma_score": 3.1},
+      "explanation": "Illustrative schema example only; this is not an observed crew result.",
       "synthetic": true
     },
     "ResearchSource": {

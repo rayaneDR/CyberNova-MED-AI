@@ -1,5 +1,7 @@
 # Backend implementation plan — next task, not implementation
 
+> Historical planning note: this plan predates the implemented backend and analytics integration. `feature/analytics-integration` supersedes the setup and analytics-unavailable steps below. See [integration-contract-v1.md](integration-contract-v1.md), [analytics-integration.md](analytics-integration.md), and [Backend API README](../backend/README.md) for current behavior. Ownership and scientific-review boundaries remain relevant.
+
 ## Starting point and boundaries
 
 Use `feature/backend-rayane`, based on `72d9bcd` (complete frontend MVP). Remote main is still `24c1046`; no automatic merge, reset, or history rewrite is authorized. The existing untracked source-review draft was preserved, reread, and its source/syntax checks rerun. This task adds contract documentation/design schemas and the specifically requested frontend fatigue correction only. The four Downloads originals, teammate modules, old shared contract and original frontend branch remain intact.

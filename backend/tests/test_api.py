@@ -4,7 +4,7 @@ from backend.app.models import ResourceRow
 from backend.app.db import SessionLocal
 
 def test_health_and_docs(client):
-    assert client.get("/health").json()=={"status":"ok","contract_version":"1.0.0","storage":"ready","analytics":"not_configured","synthetic_only":True}
+    assert client.get("/health").json()=={"status":"ok","contract_version":"1.0.0","storage":"ready","analytics":"ready","synthetic_only":True}
     assert client.get("/docs").status_code==200
 
 def test_astronaut_roster(client,seeded):
@@ -94,10 +94,12 @@ def test_duplicate_json_key_rejected(client,seeded):
     r=client.post(f"/ingest/simulator?source_session_id={session['source_session_id']}",content=b'{"project":"a","project":"b"}',headers={"Content-Type":"application/json"})
     assert r.status_code==400
 
-def test_analytics_unavailable(client,seeded):
+def test_analytics_warmup_state(client,seeded):
     astronaut=seeded["sessions"][0]["astronaut_id"]
     result=client.get(f"/analytics/summary?mission_id={seeded['mission_id']}&astronaut_id={astronaut}").json()
-    assert result["analytics_status"]=="not_configured" and result["summary"] is None and result["statistical_observations_count"] is None
+    assert result["analytics_status"]=="ready" and result["baseline_status"]=="insufficient_baseline"
+    assert result["statistical_observations_count"]==0 and len(result["metrics"])==3
+    assert all(item["status"]=="INSUFFICIENT_BASELINE" for item in result["metrics"])
 
 def test_radiation_quantity_boundary(client,seeded,packet):
     session=next(x for x in seeded["sessions"] if x["source_format"]=="amina_simulator_v1")

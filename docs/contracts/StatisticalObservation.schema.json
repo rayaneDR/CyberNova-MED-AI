@@ -51,6 +51,20 @@
       "title": "Method",
       "type": "string"
     },
+    "observation_type": {
+      "enum": [
+        "robust_deviation",
+        "sustained_ewma_shift",
+        "combined_deviation"
+      ],
+      "title": "Observation Type",
+      "type": "string"
+    },
+    "status": {
+      "const": "STATISTICAL_DEVIATION",
+      "title": "Status",
+      "type": "string"
+    },
     "algorithm_version": {
       "minLength": 1,
       "title": "Algorithm Version",
@@ -64,6 +78,30 @@
     "score": {
       "title": "Score",
       "type": "number"
+    },
+    "source": {
+      "minLength": 1,
+      "title": "Source",
+      "type": "string"
+    },
+    "quality": {
+      "const": "unverified",
+      "title": "Quality",
+      "type": "string"
+    },
+    "supporting_values": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "integer"
+          }
+        ]
+      },
+      "title": "Supporting Values",
+      "type": "object"
     },
     "explanation": {
       "minLength": 1,
@@ -85,9 +123,14 @@
     "activity_context",
     "metric",
     "method",
+    "observation_type",
+    "status",
     "algorithm_version",
     "baseline_id",
     "score",
+    "source",
+    "quality",
+    "supporting_values",
     "explanation",
     "synthetic"
   ],

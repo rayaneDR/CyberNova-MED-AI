@@ -1,6 +1,7 @@
-"""Executable contract design only. No FastAPI service, adapters, storage, or analytics.
+"""Canonical contract models used by the API response layer and JSON Schema.
 
-Uses already available Pydantic 2.14.1. Outputs JSON Schema when run directly.
+Analytics computation is implemented separately in analytics/. Outputs schemas
+when run directly.
 """
 from datetime import timezone
 from pathlib import Path
@@ -216,9 +217,14 @@ class StatisticalObservation(Model):
     activity_context: str
     metric: Literal["heart_rate_bpm", "spo2_percent", "respiratory_rate_per_min"]
     method: Literal["median_mad", "ewma"]
+    observation_type: Literal["robust_deviation", "sustained_ewma_shift", "combined_deviation"]
+    status: Literal["STATISTICAL_DEVIATION"]
     algorithm_version: Annotated[str, Field(min_length=1)]
     baseline_id: UUID
     score: float
+    source: Annotated[str, Field(min_length=1)]
+    quality: Literal["unverified"]
+    supporting_values: dict[str, float | int]
     explanation: Annotated[str, Field(min_length=1)]
     synthetic: Literal[True]
 
@@ -264,4 +270,4 @@ if __name__ == "__main__":
         schema = model.model_json_schema()
         schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
         (destination / f"{name}.schema.json").write_text(json.dumps(schema, indent=2) + "\n", encoding="utf-8")
-    print(f"Generated {len(MODELS)} design schemas; no backend implemented.")
+    print(f"Generated {len(MODELS)} canonical contract schemas.")
