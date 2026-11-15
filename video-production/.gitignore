@@ -1,0 +1,6 @@
+node_modules/
+exports/*.mp4
+build/
+public/*.webm
+public/*.wav
+assets/

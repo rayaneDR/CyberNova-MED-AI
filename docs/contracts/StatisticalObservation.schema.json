@@ -1,0 +1,140 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "astronaut_id": {
+      "format": "uuid",
+      "title": "Astronaut Id",
+      "type": "string"
+    },
+    "mission_id": {
+      "format": "uuid",
+      "title": "Mission Id",
+      "type": "string"
+    },
+    "measurement_ids": {
+      "items": {
+        "format": "uuid",
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Measurement Ids",
+      "type": "array"
+    },
+    "detected_at": {
+      "format": "date-time",
+      "title": "Detected At",
+      "type": "string"
+    },
+    "activity_context": {
+      "title": "Activity Context",
+      "type": "string"
+    },
+    "metric": {
+      "enum": [
+        "heart_rate_bpm",
+        "spo2_percent",
+        "respiratory_rate_per_min"
+      ],
+      "title": "Metric",
+      "type": "string"
+    },
+    "method": {
+      "enum": [
+        "median_mad",
+        "ewma"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "observation_type": {
+      "enum": [
+        "robust_deviation",
+        "sustained_ewma_shift",
+        "combined_deviation"
+      ],
+      "title": "Observation Type",
+      "type": "string"
+    },
+    "status": {
+      "const": "STATISTICAL_DEVIATION",
+      "title": "Status",
+      "type": "string"
+    },
+    "algorithm_version": {
+      "minLength": 1,
+      "title": "Algorithm Version",
+      "type": "string"
+    },
+    "baseline_id": {
+      "format": "uuid",
+      "title": "Baseline Id",
+      "type": "string"
+    },
+    "score": {
+      "title": "Score",
+      "type": "number"
+    },
+    "source": {
+      "minLength": 1,
+      "title": "Source",
+      "type": "string"
+    },
+    "quality": {
+      "const": "unverified",
+      "title": "Quality",
+      "type": "string"
+    },
+    "supporting_values": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "integer"
+          }
+        ]
+      },
+      "title": "Supporting Values",
+      "type": "object"
+    },
+    "explanation": {
+      "minLength": 1,
+      "title": "Explanation",
+      "type": "string"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "astronaut_id",
+    "mission_id",
+    "measurement_ids",
+    "detected_at",
+    "activity_context",
+    "metric",
+    "method",
+    "observation_type",
+    "status",
+    "algorithm_version",
+    "baseline_id",
+    "score",
+    "source",
+    "quality",
+    "supporting_values",
+    "explanation",
+    "synthetic"
+  ],
+  "title": "StatisticalObservation",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,294 @@
+{
+  "$defs": {
+    "Breathing": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "unit": {
+          "const": "breaths/min",
+          "title": "Unit",
+          "type": "string"
+        },
+        "quality": {
+          "enum": [
+            "unverified",
+            "missing",
+            "invalid",
+            "conflict"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "source_paths": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Paths",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "quality",
+        "source_paths"
+      ],
+      "title": "Breathing",
+      "type": "object"
+    },
+    "HeartRate": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "unit": {
+          "const": "bpm",
+          "title": "Unit",
+          "type": "string"
+        },
+        "quality": {
+          "enum": [
+            "unverified",
+            "missing",
+            "invalid",
+            "conflict"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "source_paths": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Paths",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "quality",
+        "source_paths"
+      ],
+      "title": "HeartRate",
+      "type": "object"
+    },
+    "Oxygen": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "unit": {
+          "const": "percent",
+          "title": "Unit",
+          "type": "string"
+        },
+        "quality": {
+          "enum": [
+            "unverified",
+            "missing",
+            "invalid",
+            "conflict"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "source_paths": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Paths",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "quality",
+        "source_paths"
+      ],
+      "title": "Oxygen",
+      "type": "object"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "source_format": {
+          "enum": [
+            "ayoub_raw_v1",
+            "amina_simulator_v1",
+            "canonical_v1",
+            "frontend_mock_v1"
+          ],
+          "title": "Source Format",
+          "type": "string"
+        },
+        "source_session_id": {
+          "format": "uuid",
+          "title": "Source Session Id",
+          "type": "string"
+        },
+        "source_record_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "source_sent_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source Sent At"
+        },
+        "received_at": {
+          "format": "date-time",
+          "title": "Received At",
+          "type": "string"
+        },
+        "ingest_id": {
+          "format": "uuid",
+          "title": "Ingest Id",
+          "type": "string"
+        },
+        "payload_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Payload Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_format",
+        "source_session_id",
+        "source_record_id",
+        "source_sent_at",
+        "received_at",
+        "ingest_id",
+        "payload_sha256"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "astronaut_id": {
+      "format": "uuid",
+      "title": "Astronaut Id",
+      "type": "string"
+    },
+    "mission_id": {
+      "format": "uuid",
+      "title": "Mission Id",
+      "type": "string"
+    },
+    "mission_day": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Mission Day"
+    },
+    "observed_at": {
+      "format": "date-time",
+      "title": "Observed At",
+      "type": "string"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "activity_context": {
+      "enum": [
+        "RESTING",
+        "SLEEP",
+        "EXERCISE",
+        "EVA_PREP",
+        "EVA_ACTIVE",
+        "LAB_WORK",
+        "UNKNOWN"
+      ],
+      "title": "Activity Context",
+      "type": "string"
+    },
+    "heart_rate_bpm": {
+      "$ref": "#/$defs/HeartRate"
+    },
+    "spo2_percent": {
+      "$ref": "#/$defs/Oxygen"
+    },
+    "respiratory_rate_per_min": {
+      "$ref": "#/$defs/Breathing"
+    },
+    "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    }
+  },
+  "required": [
+    "astronaut_id",
+    "mission_id",
+    "mission_day",
+    "observed_at",
+    "synthetic",
+    "activity_context",
+    "heart_rate_bpm",
+    "spo2_percent",
+    "respiratory_rate_per_min",
+    "id",
+    "provenance"
+  ],
+  "title": "Measurement",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

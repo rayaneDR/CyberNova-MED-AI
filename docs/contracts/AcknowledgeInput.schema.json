@@ -1,0 +1,22 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "acknowledged": {
+      "const": true,
+      "title": "Acknowledged",
+      "type": "boolean"
+    },
+    "note": {
+      "maxLength": 500,
+      "title": "Note",
+      "type": "string"
+    }
+  },
+  "required": [
+    "acknowledged",
+    "note"
+  ],
+  "title": "AcknowledgeInput",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

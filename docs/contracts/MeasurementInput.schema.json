@@ -1,0 +1,220 @@
+{
+  "$defs": {
+    "Breathing": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "unit": {
+          "const": "breaths/min",
+          "title": "Unit",
+          "type": "string"
+        },
+        "quality": {
+          "enum": [
+            "unverified",
+            "missing",
+            "invalid",
+            "conflict"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "source_paths": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Paths",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "quality",
+        "source_paths"
+      ],
+      "title": "Breathing",
+      "type": "object"
+    },
+    "HeartRate": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "unit": {
+          "const": "bpm",
+          "title": "Unit",
+          "type": "string"
+        },
+        "quality": {
+          "enum": [
+            "unverified",
+            "missing",
+            "invalid",
+            "conflict"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "source_paths": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Paths",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "quality",
+        "source_paths"
+      ],
+      "title": "HeartRate",
+      "type": "object"
+    },
+    "Oxygen": {
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "unit": {
+          "const": "percent",
+          "title": "Unit",
+          "type": "string"
+        },
+        "quality": {
+          "enum": [
+            "unverified",
+            "missing",
+            "invalid",
+            "conflict"
+          ],
+          "title": "Quality",
+          "type": "string"
+        },
+        "source_paths": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Paths",
+          "type": "array"
+        }
+      },
+      "required": [
+        "value",
+        "unit",
+        "quality",
+        "source_paths"
+      ],
+      "title": "Oxygen",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "astronaut_id": {
+      "format": "uuid",
+      "title": "Astronaut Id",
+      "type": "string"
+    },
+    "mission_id": {
+      "format": "uuid",
+      "title": "Mission Id",
+      "type": "string"
+    },
+    "mission_day": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Mission Day"
+    },
+    "observed_at": {
+      "format": "date-time",
+      "title": "Observed At",
+      "type": "string"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "activity_context": {
+      "enum": [
+        "RESTING",
+        "SLEEP",
+        "EXERCISE",
+        "EVA_PREP",
+        "EVA_ACTIVE",
+        "LAB_WORK",
+        "UNKNOWN"
+      ],
+      "title": "Activity Context",
+      "type": "string"
+    },
+    "heart_rate_bpm": {
+      "$ref": "#/$defs/HeartRate"
+    },
+    "spo2_percent": {
+      "$ref": "#/$defs/Oxygen"
+    },
+    "respiratory_rate_per_min": {
+      "$ref": "#/$defs/Breathing"
+    }
+  },
+  "required": [
+    "astronaut_id",
+    "mission_id",
+    "mission_day",
+    "observed_at",
+    "synthetic",
+    "activity_context",
+    "heart_rate_bpm",
+    "spo2_percent",
+    "respiratory_rate_per_min"
+  ],
+  "title": "MeasurementInput",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

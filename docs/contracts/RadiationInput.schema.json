@@ -1,0 +1,155 @@
+{
+  "$defs": {
+    "Window": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "Window",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "astronaut_id": {
+      "format": "uuid",
+      "title": "Astronaut Id",
+      "type": "string"
+    },
+    "mission_id": {
+      "format": "uuid",
+      "title": "Mission Id",
+      "type": "string"
+    },
+    "mission_day": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Mission Day"
+    },
+    "observed_at": {
+      "format": "date-time",
+      "title": "Observed At",
+      "type": "string"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "quantity": {
+      "enum": [
+        "daily_exposure_dose_msv",
+        "cumulative_mission_dose_msv",
+        "source_dose_rate_msv_day",
+        "source_interval_dose_msv",
+        "source_cumulative_dose_msv"
+      ],
+      "title": "Quantity",
+      "type": "string"
+    },
+    "value": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Value"
+    },
+    "unit": {
+      "enum": [
+        "mSv",
+        "mSv/day"
+      ],
+      "title": "Unit",
+      "type": "string"
+    },
+    "dose_basis": {
+      "enum": [
+        "unspecified",
+        "effective",
+        "dose_equivalent"
+      ],
+      "title": "Dose Basis",
+      "type": "string"
+    },
+    "quality": {
+      "enum": [
+        "unverified",
+        "missing",
+        "invalid",
+        "conflict"
+      ],
+      "title": "Quality",
+      "type": "string"
+    },
+    "integration_window": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Window"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "method": {
+      "enum": [
+        "source_reported",
+        "integrated_piecewise_constant",
+        "sum_nonoverlapping_daily_doses"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "source_paths": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Paths",
+      "type": "array"
+    }
+  },
+  "required": [
+    "astronaut_id",
+    "mission_id",
+    "mission_day",
+    "observed_at",
+    "synthetic",
+    "quantity",
+    "value",
+    "unit",
+    "dose_basis",
+    "quality",
+    "integration_window",
+    "method",
+    "source_paths"
+  ],
+  "title": "RadiationInput",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

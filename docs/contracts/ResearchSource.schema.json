@@ -1,0 +1,107 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "url": {
+      "pattern": "^https://",
+      "title": "Url",
+      "type": "string"
+    },
+    "agency": {
+      "title": "Agency",
+      "type": "string"
+    },
+    "source_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Source Version"
+    },
+    "accessed_at": {
+      "format": "date-time",
+      "title": "Accessed At",
+      "type": "string"
+    },
+    "locator": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Locator"
+    },
+    "supported_claim": {
+      "title": "Supported Claim",
+      "type": "string"
+    },
+    "limitation": {
+      "title": "Limitation",
+      "type": "string"
+    },
+    "verification_state": {
+      "enum": [
+        "context_checked",
+        "claim_unverified",
+        "claim_conflict",
+        "team_reviewed"
+      ],
+      "title": "Verification State",
+      "type": "string"
+    },
+    "source_claimed_verification": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Source Claimed Verification"
+    },
+    "used_as_dataset": {
+      "const": false,
+      "title": "Used As Dataset",
+      "type": "boolean"
+    },
+    "active_for_evaluation": {
+      "const": false,
+      "title": "Active For Evaluation",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "url",
+    "agency",
+    "source_version",
+    "accessed_at",
+    "locator",
+    "supported_claim",
+    "limitation",
+    "verification_state",
+    "source_claimed_verification",
+    "used_as_dataset",
+    "active_for_evaluation"
+  ],
+  "title": "ResearchSource",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

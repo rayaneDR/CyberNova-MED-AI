@@ -1,0 +1,39 @@
+1
+00:00:00,000 --> 00:00:45,000
+Space missions create a demanding setting for reviewing health observations. CyberNova is an independent research prototype. The crew and telemetry are synthetic.
+
+2
+00:00:45,000 --> 00:01:45,000
+Activity, source quality and time matter. A missing sensor channel needs a different explanation from a valid signal that changes. Neither establishes a diagnosis.
+
+3
+00:01:45,000 --> 00:02:45,000
+Six connected views bring together overview metrics, health history, observations, daily check-ins, radiation and research. Demo fixtures stay visibly separate from Live API mode.
+
+4
+00:02:45,000 --> 00:04:00,000
+Amina’s simulator sends synthetic packets. FastAPI validates units and source fields. SQLite persists records. Statistical observations and source-quality events travel separately to Next.js.
+
+5
+00:04:00,000 --> 00:05:30,000
+Rolling median and median absolute deviation describe a personal history. EWMA provides trend context. Warm-up, activity separation and persistence rules support engineering observations for human review.
+
+6
+00:05:30,000 --> 00:07:00,000
+Select fictional crew, explore health history and review source quality. Daily check-ins use fatigue one through seven. Radiation dose rate and accumulated dose remain distinct. Public Vercel uses synthetic Demo fixtures.
+
+7
+00:07:00,000 --> 00:08:00,000
+NASA Human Research Program resources informed the design. OSDR OSD-53 catalog metadata supplies research context. No experimental gene-expression values or NASA biometric series are analyzed.
+
+8
+00:08:00,000 --> 00:09:00,000
+Rayane: leadership and integration. Khawla: original backend contribution. Amina: simulator. Ali: analytics prototype and review. Ayoub: scientific references. Fifty-one backend and analytics tests passed in the verified release.
+
+9
+00:09:00,000 --> 00:09:40,000
+Future work includes suitable governed data, scientific evaluation, security controls and operational usability testing. These are future goals and are not implemented clinical capabilities.
+
+10
+00:09:40,000 --> 00:10:00,000
+Transparent observations. Visible uncertainty. Human review. CyberNova X. Independent Space Apps project, with no NASA endorsement.

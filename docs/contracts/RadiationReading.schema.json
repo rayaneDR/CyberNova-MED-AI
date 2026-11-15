@@ -1,0 +1,229 @@
+{
+  "$defs": {
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "source_format": {
+          "enum": [
+            "ayoub_raw_v1",
+            "amina_simulator_v1",
+            "canonical_v1",
+            "frontend_mock_v1"
+          ],
+          "title": "Source Format",
+          "type": "string"
+        },
+        "source_session_id": {
+          "format": "uuid",
+          "title": "Source Session Id",
+          "type": "string"
+        },
+        "source_record_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Source Record Id",
+          "type": "string"
+        },
+        "source_sent_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source Sent At"
+        },
+        "received_at": {
+          "format": "date-time",
+          "title": "Received At",
+          "type": "string"
+        },
+        "ingest_id": {
+          "format": "uuid",
+          "title": "Ingest Id",
+          "type": "string"
+        },
+        "payload_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "title": "Payload Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_format",
+        "source_session_id",
+        "source_record_id",
+        "source_sent_at",
+        "received_at",
+        "ingest_id",
+        "payload_sha256"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "Window": {
+      "additionalProperties": false,
+      "properties": {
+        "start": {
+          "format": "date-time",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "format": "date-time",
+          "title": "End",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "Window",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "astronaut_id": {
+      "format": "uuid",
+      "title": "Astronaut Id",
+      "type": "string"
+    },
+    "mission_id": {
+      "format": "uuid",
+      "title": "Mission Id",
+      "type": "string"
+    },
+    "mission_day": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Mission Day"
+    },
+    "observed_at": {
+      "format": "date-time",
+      "title": "Observed At",
+      "type": "string"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "quantity": {
+      "enum": [
+        "daily_exposure_dose_msv",
+        "cumulative_mission_dose_msv",
+        "source_dose_rate_msv_day",
+        "source_interval_dose_msv",
+        "source_cumulative_dose_msv"
+      ],
+      "title": "Quantity",
+      "type": "string"
+    },
+    "value": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Value"
+    },
+    "unit": {
+      "enum": [
+        "mSv",
+        "mSv/day"
+      ],
+      "title": "Unit",
+      "type": "string"
+    },
+    "dose_basis": {
+      "enum": [
+        "unspecified",
+        "effective",
+        "dose_equivalent"
+      ],
+      "title": "Dose Basis",
+      "type": "string"
+    },
+    "quality": {
+      "enum": [
+        "unverified",
+        "missing",
+        "invalid",
+        "conflict"
+      ],
+      "title": "Quality",
+      "type": "string"
+    },
+    "integration_window": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Window"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "method": {
+      "enum": [
+        "source_reported",
+        "integrated_piecewise_constant",
+        "sum_nonoverlapping_daily_doses"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "source_paths": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Paths",
+      "type": "array"
+    },
+    "id": {
+      "format": "uuid",
+      "title": "Id",
+      "type": "string"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    }
+  },
+  "required": [
+    "astronaut_id",
+    "mission_id",
+    "mission_day",
+    "observed_at",
+    "synthetic",
+    "quantity",
+    "value",
+    "unit",
+    "dose_basis",
+    "quality",
+    "integration_window",
+    "method",
+    "source_paths",
+    "id",
+    "provenance"
+  ],
+  "title": "RadiationReading",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

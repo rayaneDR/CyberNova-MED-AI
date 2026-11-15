@@ -1,0 +1,348 @@
+{
+  "design_examples_only": true,
+  "not_actual_api_responses": true,
+  "examples": {
+    "Astronaut": {
+      "id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "display_name": "Fictional contract subject",
+      "role": "Demo crew",
+      "aliases": [
+        {
+          "namespace": "design_only",
+          "value": "AST-DEMO"
+        }
+      ],
+      "synthetic": true
+    },
+    "MeasurementInput": {
+      "astronaut_id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "mission_day": 14,
+      "observed_at": "2026-11-14T14:30:00Z",
+      "synthetic": true,
+      "activity_context": "RESTING",
+      "heart_rate_bpm": {
+        "value": 64.0,
+        "unit": "bpm",
+        "quality": "unverified",
+        "source_paths": [
+          "automated_sensors.heart_rate.value"
+        ]
+      },
+      "spo2_percent": {
+        "value": 98.0,
+        "unit": "percent",
+        "quality": "unverified",
+        "source_paths": [
+          "automated_sensors.spo2.value"
+        ]
+      },
+      "respiratory_rate_per_min": {
+        "value": 15.0,
+        "unit": "breaths/min",
+        "quality": "unverified",
+        "source_paths": [
+          "automated_sensors.respiratory_rate.value"
+        ]
+      }
+    },
+    "Measurement": {
+      "astronaut_id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "mission_day": 14,
+      "observed_at": "2026-11-14T14:30:00Z",
+      "synthetic": true,
+      "activity_context": "RESTING",
+      "heart_rate_bpm": {
+        "value": 64.0,
+        "unit": "bpm",
+        "quality": "unverified",
+        "source_paths": [
+          "automated_sensors.heart_rate.value"
+        ]
+      },
+      "spo2_percent": {
+        "value": 98.0,
+        "unit": "percent",
+        "quality": "unverified",
+        "source_paths": [
+          "automated_sensors.spo2.value"
+        ]
+      },
+      "respiratory_rate_per_min": {
+        "value": 15.0,
+        "unit": "breaths/min",
+        "quality": "unverified",
+        "source_paths": [
+          "automated_sensors.respiratory_rate.value"
+        ]
+      },
+      "id": "00000005-1111-4111-8111-111111111111",
+      "provenance": {
+        "source_format": "canonical_v1",
+        "source_session_id": "00000003-1111-4111-8111-111111111111",
+        "source_record_id": "design-example-only",
+        "source_sent_at": null,
+        "received_at": "2026-11-14T14:30:01Z",
+        "ingest_id": "00000004-1111-4111-8111-111111111111",
+        "payload_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "CheckInInput": {
+      "astronaut_id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "mission_day": 14,
+      "observed_at": "2026-11-14T14:30:00Z",
+      "synthetic": true,
+      "report_kind": "user_demo",
+      "submitted_at": "2026-11-14T14:30:00Z",
+      "reporting_window": {
+        "start": "2026-11-13T14:30:00Z",
+        "end": "2026-11-14T14:30:00Z"
+      },
+      "sleep_hours": 7.5,
+      "fatigue": {
+        "value": 2,
+        "scale": "samn_perelli_1_7",
+        "source_scale_label": "Samn-Perelli proposed MVP",
+        "assessed_at": "2026-11-14T14:30:00Z"
+      },
+      "legacy_fatigue": null,
+      "hydration_intake_ml": 2450.0,
+      "notes": "Fictional design example, not an observed crew record."
+    },
+    "CheckIn": {
+      "astronaut_id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "mission_day": 14,
+      "observed_at": "2026-11-14T14:30:00Z",
+      "synthetic": true,
+      "report_kind": "user_demo",
+      "submitted_at": "2026-11-14T14:30:00Z",
+      "reporting_window": {
+        "start": "2026-11-13T14:30:00Z",
+        "end": "2026-11-14T14:30:00Z"
+      },
+      "sleep_hours": 7.5,
+      "fatigue": {
+        "value": 2,
+        "scale": "samn_perelli_1_7",
+        "source_scale_label": "Samn-Perelli proposed MVP",
+        "assessed_at": "2026-11-14T14:30:00Z"
+      },
+      "legacy_fatigue": null,
+      "hydration_intake_ml": 2450.0,
+      "notes": "Fictional design example, not an observed crew record.",
+      "id": "00000006-1111-4111-8111-111111111111",
+      "provenance": {
+        "source_format": "canonical_v1",
+        "source_session_id": "00000003-1111-4111-8111-111111111111",
+        "source_record_id": "design-example-only",
+        "source_sent_at": null,
+        "received_at": "2026-11-14T14:30:01Z",
+        "ingest_id": "00000004-1111-4111-8111-111111111111",
+        "payload_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "RadiationInput": {
+      "astronaut_id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "mission_day": 14,
+      "observed_at": "2026-11-14T14:30:00Z",
+      "synthetic": true,
+      "quantity": "daily_exposure_dose_msv",
+      "value": 0.52,
+      "unit": "mSv",
+      "dose_basis": "unspecified",
+      "quality": "unverified",
+      "integration_window": {
+        "start": "2026-11-13T14:30:00Z",
+        "end": "2026-11-14T14:30:00Z"
+      },
+      "method": "source_reported",
+      "source_paths": [
+        "design-example.explicit-24h-dose"
+      ]
+    },
+    "RadiationReading": {
+      "astronaut_id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "mission_day": 14,
+      "observed_at": "2026-11-14T14:30:00Z",
+      "synthetic": true,
+      "quantity": "daily_exposure_dose_msv",
+      "value": 0.52,
+      "unit": "mSv",
+      "dose_basis": "unspecified",
+      "quality": "unverified",
+      "integration_window": {
+        "start": "2026-11-13T14:30:00Z",
+        "end": "2026-11-14T14:30:00Z"
+      },
+      "method": "source_reported",
+      "source_paths": [
+        "design-example.explicit-24h-dose"
+      ],
+      "id": "00000007-1111-4111-8111-111111111111",
+      "provenance": {
+        "source_format": "canonical_v1",
+        "source_session_id": "00000003-1111-4111-8111-111111111111",
+        "source_record_id": "design-example-only",
+        "source_sent_at": null,
+        "received_at": "2026-11-14T14:30:01Z",
+        "ingest_id": "00000004-1111-4111-8111-111111111111",
+        "payload_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      }
+    },
+    "SensorHealth": {
+      "id": "00000008-1111-4111-8111-111111111111",
+      "measurement_id": "00000005-1111-4111-8111-111111111111",
+      "channel": "heart_rate_bpm",
+      "source_reported_status": null,
+      "hardware_model_claim": null,
+      "quality": "unverified",
+      "issue_codes": [
+        "STATUS_UNREPORTED"
+      ],
+      "connectivity": "unknown",
+      "last_source_sample_at": "2026-11-14T14:30:00Z",
+      "last_non_null_sample_at": "2026-11-14T14:30:00Z",
+      "synthetic": true
+    },
+    "StatisticalObservation": {
+      "id": "00000009-1111-4111-8111-111111111111",
+      "astronaut_id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "measurement_ids": [
+        "00000005-1111-4111-8111-111111111111"
+      ],
+      "detected_at": "2026-11-14T14:30:00Z",
+      "activity_context": "RESTING",
+      "metric": "heart_rate_bpm",
+      "method": "median_mad",
+      "observation_type": "robust_deviation",
+      "status": "STATISTICAL_DEVIATION",
+      "algorithm_version": "personal-baseline-mad-ewma-v1",
+      "baseline_id": "00000010-1111-4111-8111-111111111111",
+      "score": 0.0,
+      "source": "amina_simulator_v1",
+      "quality": "unverified",
+      "supporting_values": {"baseline_sample_count": 8, "baseline_median": 70, "mad": 1, "robust_score": 4.0, "ewma_score": 3.1},
+      "explanation": "Illustrative schema example only; this is not an observed crew result.",
+      "synthetic": true
+    },
+    "ResearchSource": {
+      "id": "00000011-1111-4111-8111-111111111111",
+      "title": "NASA HRP research context",
+      "url": "https://www.nasa.gov/hrp/risks/",
+      "agency": "NASA",
+      "source_version": null,
+      "accessed_at": "2026-11-14T16:00:00Z",
+      "locator": null,
+      "supported_claim": "Human spaceflight research context",
+      "limitation": "Does not validate application thresholds.",
+      "verification_state": "context_checked",
+      "source_claimed_verification": null,
+      "used_as_dataset": false,
+      "active_for_evaluation": false
+    },
+    "AcknowledgeInput": {
+      "acknowledged": true,
+      "note": "Operational review only"
+    }
+  },
+  "source_and_radiation_variants": {
+    "canonical_cumulative": {
+      "astronaut_id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "mission_day": 14,
+      "observed_at": "2026-11-14T14:30:00Z",
+      "synthetic": true,
+      "quantity": "cumulative_mission_dose_msv",
+      "value": 7.28,
+      "unit": "mSv",
+      "dose_basis": "unspecified",
+      "quality": "unverified",
+      "integration_window": {
+        "start": "2026-11-01T00:00:00Z",
+        "end": "2026-11-14T14:30:00Z"
+      },
+      "method": "sum_nonoverlapping_daily_doses",
+      "source_paths": [
+        "design-example.complete-mission-history"
+      ]
+    },
+    "source_rate": {
+      "astronaut_id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "mission_day": 14,
+      "observed_at": "2026-11-14T14:30:00Z",
+      "synthetic": true,
+      "quantity": "source_dose_rate_msv_day",
+      "value": 0.52,
+      "unit": "mSv/day",
+      "dose_basis": "unspecified",
+      "quality": "unverified",
+      "integration_window": null,
+      "method": "source_reported",
+      "source_paths": [
+        "design-example.explicit-24h-dose"
+      ]
+    },
+    "source_period_unknown": {
+      "astronaut_id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "mission_day": 14,
+      "observed_at": "2026-11-14T14:30:00Z",
+      "synthetic": true,
+      "quantity": "source_interval_dose_msv",
+      "value": 0.52,
+      "unit": "mSv",
+      "dose_basis": "unspecified",
+      "quality": "unverified",
+      "integration_window": null,
+      "method": "source_reported",
+      "source_paths": [
+        "radiation_dosimetry.daily_exposure_dose.value"
+      ]
+    },
+    "source_cumulative_origin_unknown": {
+      "astronaut_id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "mission_day": 14,
+      "observed_at": "2026-11-14T14:30:00Z",
+      "synthetic": true,
+      "quantity": "source_cumulative_dose_msv",
+      "value": 7.28,
+      "unit": "mSv",
+      "dose_basis": "unspecified",
+      "quality": "unverified",
+      "integration_window": null,
+      "method": "source_reported",
+      "source_paths": [
+        "radiation_dosimetry.cumulative_mission_dose.value"
+      ]
+    },
+    "legacy_fatigue_snapshot": {
+      "astronaut_id": "00000002-1111-4111-8111-111111111111",
+      "mission_id": "00000001-1111-4111-8111-111111111111",
+      "mission_day": 14,
+      "observed_at": "2026-11-14T14:30:00Z",
+      "synthetic": true,
+      "report_kind": "simulator_snapshot",
+      "submitted_at": null,
+      "reporting_window": null,
+      "sleep_hours": 7.5,
+      "fatigue": null,
+      "legacy_fatigue": {
+        "value": 10,
+        "scale": "source_ordinal_1_10",
+        "source_scale_label": "fatigue_score_1_10",
+        "source_path": "manual_checkin.fatigue_score_1_10"
+      },
+      "hydration_intake_ml": 2450.0,
+      "notes": "Fictional design example, not an observed crew record."
+    }
+  }
+}

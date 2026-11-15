@@ -1,0 +1,3 @@
+# Vercel project linkage and local environment values
+.vercel/
+.env*
