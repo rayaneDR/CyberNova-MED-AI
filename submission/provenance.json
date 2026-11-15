@@ -1,0 +1,18 @@
+{
+  "project": "CyberNova MED-AI",
+  "team": "CyberNova X",
+  "ai_assistance": {
+    "tools": ["OpenAI Codex/ChatGPT", "OpenAI image generation", "OpenAI artifact-tool"],
+    "scope": ["code", "integration", "documentation", "submission drafting", "slide generation", "space artwork"],
+    "visual_watermark": "AI-generated visual",
+    "audio_or_video_generated": false
+  },
+  "data": {
+    "telemetry": "synthetic Python simulator and authored Demo fixtures",
+    "radiation": "synthetic",
+    "nasa_use": "HRP research resources and derived OSD-53 catalog metadata counts",
+    "nasa_experimental_measurements_analyzed": false
+  },
+  "official_demo": {"format": "PDF slide deck", "slides": 7},
+  "review": "Team lead must review legal declarations, team registration and final submission."
+}

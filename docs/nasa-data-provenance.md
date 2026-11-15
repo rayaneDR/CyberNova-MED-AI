@@ -15,7 +15,11 @@
 - Limitations: this is human whole-blood gene-expression research, not heart rate, SpO2, respiration, or a validated clinical monitoring protocol. A metadata record count is not a research result and does not establish a biological effect. The control record represents a group, not an individual count.
 - Reuse: the queried catalog metadata did not expose a clear study-specific license field. We attribute NASA OSDR and link to the study; we do not redistribute raw measurement data. Check current OSDR/NASA reuse terms before expanding use.
 
-The OSDR processed-file REST URL was queried during this integration attempt but returned non-ZIP content, failing ZIP validation. For that reason no processed dataset values were imported or analyzed. This integration is a verified catalog metadata snapshot, not a processed NASA dataset.
+The initial processed-file REST response failed ZIP validation. On November 15 the official file manifest at `https://osdr.nasa.gov/osdr/data/osd/files/53` identified the unrestricted 10,552-byte `GLDS-53_microarray_E-GEOD-47126.processed.zip`. Its direct download at `https://osdr.nasa.gov/geode-py/ws/studies/OSD-53/download?source=datamanager&file=GLDS-53_microarray_E-GEOD-47126.processed.zip` succeeded and had a valid ZIP signature and thirteen sample-table entries. Format inspection found `Reporter Identifier` and `VALUE` columns, including blank values. Reporter semantics, normalization and units were not fully established; these values were not integrated, scientifically analyzed or visualized. The application continues to use catalog metadata only.
+
+## Official NASA resource requirement
+
+The November 13, 2026 Project Submission Guide, read directly on November 15, requires at least one NASA data source **or resource**. The app genuinely uses and cites HRP risks, sleep/scheduling and space-radiation resources as design context, as well as retrieved OSDR metadata. This satisfies that stated use criterion; it is not a guarantee of overall eligibility. No NASA experimental measurement analysis is claimed. Synthetic telemetry remains separate. See `OFFICIAL_SUBMISSION.md` for exact references and disclosures.
 
 ## NASA references
 

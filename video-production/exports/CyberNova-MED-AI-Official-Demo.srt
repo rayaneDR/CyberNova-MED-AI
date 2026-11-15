@@ -1,0 +1,23 @@
+1
+00:00:00,000 --> 00:00:04,000
+Create Health Monitoring Software for Astronauts on Space Missions
+
+2
+00:00:04,000 --> 00:00:08,000
+Sensor failure and changing physiology require different explanations.
+
+3
+00:00:08,000 --> 00:00:14,000
+Six screens · synthetic Demo fixtures · explicit Live API mode
+
+4
+00:00:14,000 --> 00:00:20,000
+Median / MAD / EWMA · engineering parameters · human review
+
+5
+00:00:20,000 --> 00:00:25,000
+HRP research context + OSDR metadata. No NASA experimental analysis.
+
+6
+00:00:25,000 --> 00:00:29,000
+Rayane · Khawla · Ali · Amina · Ayoub
